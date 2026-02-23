@@ -6,7 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
-import { useGetAdminRecipeQuery, useUpdateAdminRecipeMutation } from '@/lib/features/admin/adminApi';
+import {
+  useGetAdminRecipeQuery,
+  useUpdateAdminRecipeMutation,
+  useGetAdminProductsQuery,
+} from '@/lib/features/admin/adminApi';
 
 export default function AdminRecipeEditPage() {
   const router = useRouter();
@@ -15,11 +19,25 @@ export default function AdminRecipeEditPage() {
 
   const { data: recipe, isLoading } = useGetAdminRecipeQuery(id, { skip: !id });
   const [updateRecipe, { isLoading: isSaving }] = useUpdateAdminRecipeMutation();
+  const { data: productsData } = useGetAdminProductsQuery({ page: 1, limit: 500 });
+  const products = productsData?.data ?? [];
 
   const initialStepsJson = useMemo(() => {
     if (!recipe?.stepsConfig) return '{\n  "steps": []\n}';
     return JSON.stringify(recipe.stepsConfig, null, 2);
   }, [recipe?.stepsConfig]);
+
+  const initialProductIds = useMemo(() => {
+    if (!recipe) return [];
+    if (Array.isArray(recipe.productIds)) return recipe.productIds;
+    if (Array.isArray(recipe.products)) return recipe.products.map((p: { id: number }) => p.id);
+    return [];
+  }, [recipe]);
+
+  const initialCustomProductsJson = useMemo(() => {
+    if (!recipe?.customProducts || !Array.isArray(recipe.customProducts)) return '[]';
+    return JSON.stringify(recipe.customProducts, null, 2);
+  }, [recipe?.customProducts]);
 
   const [form, setForm] = useState({
     name: '',
@@ -32,6 +50,8 @@ export default function AdminRecipeEditPage() {
     promotionalVideo: '',
     fluffAt: '',
     stepsConfigJson: '{\n  "steps": []\n}',
+    productIds: [] as number[],
+    customProductsJson: '[]',
   });
 
   useEffect(() => {
@@ -48,8 +68,10 @@ export default function AdminRecipeEditPage() {
       promotionalVideo: recipe.promotionalVideo ?? '',
       fluffAt: recipe.fluffAt ? String(recipe.fluffAt) : '',
       stepsConfigJson: initialStepsJson,
+      productIds: initialProductIds,
+      customProductsJson: initialCustomProductsJson,
     });
-  }, [recipe, initialStepsJson]);
+  }, [recipe, initialStepsJson, initialProductIds, initialCustomProductsJson]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +81,15 @@ export default function AdminRecipeEditPage() {
       stepsConfig = form.stepsConfigJson.trim() ? JSON.parse(form.stepsConfigJson) : undefined;
     } catch {
       alert('stepsConfig JSON is invalid');
+      return;
+    }
+
+    let customProducts: any[] = [];
+    try {
+      customProducts = form.customProductsJson.trim() ? JSON.parse(form.customProductsJson) : [];
+      if (!Array.isArray(customProducts)) customProducts = [];
+    } catch {
+      alert('Custom products JSON is invalid');
       return;
     }
 
@@ -78,6 +109,8 @@ export default function AdminRecipeEditPage() {
             }
           : undefined,
       stepsConfig,
+      productIds: form.productIds,
+      customProducts,
     };
 
     Object.keys(body).forEach((k) => (body[k] === undefined ? delete body[k] : undefined));
@@ -209,6 +242,63 @@ export default function AdminRecipeEditPage() {
                 id="promotionalVideo"
                 value={form.promotionalVideo}
                 onChange={(e) => setForm({ ...form, promotionalVideo: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                Продукты из базы
+              </label>
+              <p className="text-xs text-muted-foreground mb-2">
+                Выберите продукты из списка (будут отправлены как productIds)
+              </p>
+              <div className="border rounded-md p-3 max-h-48 overflow-y-auto space-y-2">
+                {products.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Нет продуктов в базе или загрузка...
+                  </p>
+                ) : (
+                  products.map((p: { id: number; name: string }) => (
+                    <label
+                      key={p.id}
+                      className="flex items-center gap-2 cursor-pointer hover:bg-muted/50 rounded px-2 py-1"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={form.productIds.includes(p.id)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setForm((prev) => ({
+                            ...prev,
+                            productIds: checked
+                              ? [...prev.productIds, p.id]
+                              : prev.productIds.filter((id) => id !== p.id),
+                          }));
+                        }}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm">
+                        {p.name} <span className="text-muted-foreground">(ID: {p.id})</span>
+                      </span>
+                    </label>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="customProductsJson" className="text-sm font-medium">
+                Кастомные продукты
+              </label>
+              <p className="text-xs text-muted-foreground mb-1">
+                JSON-массив объектов, например: [{`{"name": "Соль", "amount": "по вкусу"}`}]
+              </p>
+              <textarea
+                id="customProductsJson"
+                className="w-full min-h-24 border rounded-md px-3 py-2 font-mono text-xs"
+                value={form.customProductsJson}
+                onChange={(e) => setForm({ ...form, customProductsJson: e.target.value })}
+                placeholder={'[{"name": "Соль", "amount": "по вкусу"}]'}
               />
             </div>
 
