@@ -54,6 +54,10 @@ export const adminApi = api.injectEndpoints({
       query: ({ page = 1, limit = 10 }) => `/admin/recipes?page=${page}&limit=${limit}`,
       providesTags: ['Recipes'],
     }),
+    getAdminRecipesRequests: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
+      query: ({ page = 1, limit = 10 }) => `/admin/recipes/requests?page=${page}&limit=${limit}`,
+      providesTags: ['Recipes'],
+    }),
     getAdminRecipe: builder.query<any, number>({
       query: (id) => `/admin/recipes/${id}`,
       providesTags: ['Recipes'],
@@ -144,6 +148,7 @@ export const {
   useUpdateAdminRecipeMutation,
   useGetAdminProductsQuery,
   useGetAdminProductQuery,
+  useGetAdminRecipesRequestsQuery,
   useDeleteProductMutation,
   useCreateAdminProductMutation,
   useUpdateAdminProductMutation,
