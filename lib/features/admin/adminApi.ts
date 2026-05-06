@@ -1,4 +1,5 @@
-import { api } from '@/lib/api';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { api } from "@/lib/api";
 
 export interface AdminStats {
   total_users: number;
@@ -14,122 +15,194 @@ export interface AdminStats {
   users_with_favorites: number;
 }
 
+export enum SupportTicketStatus {
+  OPEN = "open",
+  IN_PROGRESS = "in_progress",
+  RESOLVED = "resolved",
+  CLOSED = "closed",
+}
+
+export interface UpdateTicketBody {
+  status: SupportTicketStatus;
+}
+
 export const adminApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAdminStats: builder.query<AdminStats, void>({
-      query: () => '/admin/stats',
-      providesTags: ['Dashboard'],
+      query: () => "/admin/stats",
+      providesTags: ["Dashboard"],
     }),
     refreshAdminStats: builder.mutation<void, void>({
       query: () => ({
-        url: '/admin/stats/refresh',
-        method: 'POST',
+        url: "/admin/stats/refresh",
+        method: "POST",
       }),
-      invalidatesTags: ['Dashboard'],
+      invalidatesTags: ["Dashboard"],
     }),
-    getAdminUsers: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/users?page=${page}&limit=${limit}`,
-      providesTags: ['Users'],
+    getAdminUsers: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/users?page=${page}&limit=${limit}`,
+      providesTags: ["Users"],
     }),
     getAdminUser: builder.query<any, number>({
       query: (id) => `/admin/users/${id}`,
-      providesTags: ['Users'],
+      providesTags: ["Users"],
     }),
     updateUserStatus: builder.mutation<any, { id: number; isActive: boolean }>({
       query: ({ id, isActive }) => ({
         url: `/admin/users/${id}/activate`,
-        method: 'PUT',
+        method: "PUT",
         body: { isActive },
       }),
-      invalidatesTags: ['Users'],
+      invalidatesTags: ["Users"],
     }),
     deleteUser: builder.mutation<void, number>({
       query: (id) => ({
         url: `/admin/users/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['Users'],
+      invalidatesTags: ["Users"],
     }),
-    getAdminRecipes: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/recipes?page=${page}&limit=${limit}`,
-      providesTags: ['Recipes'],
+    getAdminRecipes: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/recipes?page=${page}&limit=${limit}`,
+      providesTags: ["Recipes"],
     }),
-    getAdminRecipesRequests: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/recipes/requests?page=${page}&limit=${limit}`,
-      providesTags: ['Recipes'],
+    getAdminRecipesRequests: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/recipes/requests?page=${page}&limit=${limit}`,
+      providesTags: ["Recipes"],
     }),
     getAdminRecipe: builder.query<any, number>({
       query: (id) => `/admin/recipes/${id}`,
-      providesTags: ['Recipes'],
+      providesTags: ["Recipes"],
     }),
     deleteRecipe: builder.mutation<void, number>({
       query: (id) => ({
         url: `/admin/recipes/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['Recipes'],
+      invalidatesTags: ["Recipes"],
     }),
     createAdminRecipe: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/admin/recipes',
-        method: 'POST',
+        url: "/admin/recipes",
+        method: "POST",
         body,
       }),
-      invalidatesTags: ['Recipes', 'Dashboard'],
+      invalidatesTags: ["Recipes", "Dashboard"],
     }),
     updateAdminRecipe: builder.mutation<any, { id: number; body: any }>({
       query: ({ id, body }) => ({
         url: `/admin/recipes/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body,
       }),
-      invalidatesTags: ['Recipes', 'Dashboard'],
+      invalidatesTags: ["Recipes", "Dashboard"],
     }),
-    getAdminProducts: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/products?page=${page}&limit=${limit}`,
-      providesTags: ['Products'],
+    getAdminProducts: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/products?page=${page}&limit=${limit}`,
+      providesTags: ["Products"],
     }),
     getAdminProduct: builder.query<any, number>({
       query: (id) => `/admin/products/${id}`,
-      providesTags: ['Products'],
+      providesTags: ["Products"],
     }),
     deleteProduct: builder.mutation<void, number>({
       query: (id) => ({
         url: `/admin/products/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['Products'],
+      invalidatesTags: ["Products"],
     }),
     createAdminProduct: builder.mutation<any, any>({
       query: (body) => ({
-        url: '/admin/products',
-        method: 'POST',
+        url: "/admin/products",
+        method: "POST",
         body,
       }),
-      invalidatesTags: ['Products', 'Dashboard'],
+      invalidatesTags: ["Products", "Dashboard"],
     }),
     updateAdminProduct: builder.mutation<any, { id: number; body: any }>({
       query: ({ id, body }) => ({
         url: `/admin/products/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body,
       }),
-      invalidatesTags: ['Products', 'Dashboard'],
+      invalidatesTags: ["Products", "Dashboard"],
     }),
-    getAdminReviews: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/reviews?page=${page}&limit=${limit}`,
-      providesTags: ['Reviews'],
+    getAdminReviews: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/reviews?page=${page}&limit=${limit}`,
+      providesTags: ["Reviews"],
     }),
-    getAdminTracking: builder.query<{ data: any[]; total: number }, { page?: number; limit?: number }>({
-      query: ({ page = 1, limit = 10 }) => `/admin/tracking?page=${page}&limit=${limit}`,
-      providesTags: ['Tracking'],
+    getAdminTracking: builder.query<
+      { data: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/tracking?page=${page}&limit=${limit}`,
+      providesTags: ["Tracking"],
     }),
     getAdminAuthActivity: builder.query<
       Array<{ date: string; registrations: number; logins: number }>,
       { dateStart: string; dateEnd: string }
     >({
-      query: ({ dateStart, dateEnd }) => `/admin/auth-activity?dateStart=${encodeURIComponent(dateStart)}&dateEnd=${encodeURIComponent(dateEnd)}`,
-      providesTags: ['Dashboard'],
+      query: ({ dateStart, dateEnd }) =>
+        `/admin/auth-activity?dateStart=${encodeURIComponent(
+          dateStart
+        )}&dateEnd=${encodeURIComponent(dateEnd)}`,
+      providesTags: ["Dashboard"],
+    }),
+    getAllSupportTickets: builder.query<
+      { tickets: any[]; total: number },
+      { page?: number; limit?: number }
+    >({
+      query: ({ page = 1, limit = 10 }) =>
+        `/admin/tickets?page=${page}&limit=${limit}`,
+      providesTags: ["Support"],
+    }),
+    getSupportTicketById: builder.query<any, { id: string }>({
+      query: ({ id }) => `/admin/tickets/${id}`,
+      providesTags: ["Support"],
+    }),
+    replyOnRequest: builder.mutation<
+      { response: string },
+      { id: string; response: string }
+    >({
+      query: ({ id, response }) => ({
+        url: `/admin/tickets/${id}/reply`,
+        method: "PATCH",
+        body: { response },
+      }),
+      invalidatesTags: ["Support"],
+    }),
+    changeRequestStatus: builder.mutation<
+      any,
+      { id: string; body: UpdateTicketBody }
+    >({
+      query: ({ id, body }) => ({
+        url: `/admin/tickets/${id}/status`,
+        method: "PATCH",
+        body: body,
+      }),
+      invalidatesTags: ["Support"],
     }),
   }),
 });
@@ -155,4 +228,8 @@ export const {
   useGetAdminReviewsQuery,
   useGetAdminTrackingQuery,
   useGetAdminAuthActivityQuery,
+  useChangeRequestStatusMutation,
+  useGetAllSupportTicketsQuery,
+  useReplyOnRequestMutation,
+  useGetSupportTicketByIdQuery,
 } = adminApi;

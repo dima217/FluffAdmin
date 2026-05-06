@@ -1,16 +1,19 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/preserve-manual-memoization */
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ArrowLeft } from 'lucide-react';
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft } from "lucide-react";
 import {
   useGetAdminRecipeQuery,
   useUpdateAdminRecipeMutation,
   useGetAdminProductsQuery,
-} from '@/lib/features/admin/adminApi';
+} from "@/lib/features/admin/adminApi";
 
 export default function AdminRecipeEditPage() {
   const router = useRouter();
@@ -18,8 +21,12 @@ export default function AdminRecipeEditPage() {
   const id = Number(params.id);
 
   const { data: recipe, isLoading } = useGetAdminRecipeQuery(id, { skip: !id });
-  const [updateRecipe, { isLoading: isSaving }] = useUpdateAdminRecipeMutation();
-  const { data: productsData } = useGetAdminProductsQuery({ page: 1, limit: 500 });
+  const [updateRecipe, { isLoading: isSaving }] =
+    useUpdateAdminRecipeMutation();
+  const { data: productsData } = useGetAdminProductsQuery({
+    page: 1,
+    limit: 500,
+  });
   const products = productsData?.data ?? [];
 
   const initialStepsJson = useMemo(() => {
@@ -30,43 +37,51 @@ export default function AdminRecipeEditPage() {
   const initialProductIds = useMemo(() => {
     if (!recipe) return [];
     if (Array.isArray(recipe.productIds)) return recipe.productIds;
-    if (Array.isArray(recipe.products)) return recipe.products.map((p: { id: number }) => p.id);
+    if (Array.isArray(recipe.products))
+      return recipe.products.map((p: { id: number }) => p.id);
     return [];
   }, [recipe]);
 
   const initialCustomProductsJson = useMemo(() => {
-    if (!recipe?.customProducts || !Array.isArray(recipe.customProducts)) return '[]';
+    if (!recipe?.customProducts || !Array.isArray(recipe.customProducts))
+      return "[]";
     return JSON.stringify(recipe.customProducts, null, 2);
   }, [recipe?.customProducts]);
 
   const [form, setForm] = useState({
-    name: '',
-    recipeTypeId: '',
-    calories: '',
-    cookAt: '',
-    description: '',
-    imageCover: '',
-    imagePreview: '',
-    promotionalVideo: '',
-    fluffAt: '',
+    name: "",
+    recipeTypeId: "",
+    calories: "",
+    cookAt: "",
+    description: "",
+    imageCover: "",
+    imagePreview: "",
+    promotionalVideo: "",
+    fluffAt: "",
     stepsConfigJson: '{\n  "steps": []\n}',
     productIds: [] as number[],
-    customProductsJson: '[]',
+    customProductsJson: "[]",
   });
 
   useEffect(() => {
     if (!recipe) return;
 
     setForm({
-      name: recipe.name ?? '',
-      recipeTypeId: recipe.type?.id ? String(recipe.type.id) : '',
-      calories: recipe.calories !== undefined && recipe.calories !== null ? String(recipe.calories) : '',
-      cookAt: recipe.cookAt !== undefined && recipe.cookAt !== null ? String(recipe.cookAt) : '',
-      description: recipe.description ?? '',
-      imageCover: recipe.image?.cover ?? '',
-      imagePreview: recipe.image?.preview ?? '',
-      promotionalVideo: recipe.promotionalVideo ?? '',
-      fluffAt: recipe.fluffAt ? String(recipe.fluffAt) : '',
+      name: recipe.name ?? "",
+      recipeTypeId: recipe.type?.id ? String(recipe.type.id) : "",
+      calories:
+        recipe.calories !== undefined && recipe.calories !== null
+          ? String(recipe.calories)
+          : "",
+      cookAt:
+        recipe.cookAt !== undefined && recipe.cookAt !== null
+          ? String(recipe.cookAt)
+          : "",
+      description: recipe.description ?? "",
+      imageCover: recipe.image?.cover ?? "",
+      imagePreview: recipe.image?.preview ?? "",
+      promotionalVideo: recipe.promotionalVideo ?? "",
+      fluffAt: recipe.fluffAt ? String(recipe.fluffAt) : "",
       stepsConfigJson: initialStepsJson,
       productIds: initialProductIds,
       customProductsJson: initialCustomProductsJson,
@@ -78,18 +93,22 @@ export default function AdminRecipeEditPage() {
 
     let stepsConfig: any | undefined;
     try {
-      stepsConfig = form.stepsConfigJson.trim() ? JSON.parse(form.stepsConfigJson) : undefined;
+      stepsConfig = form.stepsConfigJson.trim()
+        ? JSON.parse(form.stepsConfigJson)
+        : undefined;
     } catch {
-      alert('stepsConfig JSON is invalid');
+      alert("stepsConfig JSON is invalid");
       return;
     }
 
     let customProducts: any[] = [];
     try {
-      customProducts = form.customProductsJson.trim() ? JSON.parse(form.customProductsJson) : [];
+      customProducts = form.customProductsJson.trim()
+        ? JSON.parse(form.customProductsJson)
+        : [];
       if (!Array.isArray(customProducts)) customProducts = [];
     } catch {
-      alert('Custom products JSON is invalid');
+      alert("Custom products JSON is invalid");
       return;
     }
 
@@ -113,15 +132,17 @@ export default function AdminRecipeEditPage() {
       customProducts,
     };
 
-    Object.keys(body).forEach((k) => (body[k] === undefined ? delete body[k] : undefined));
+    Object.keys(body).forEach((k) =>
+      body[k] === undefined ? delete body[k] : undefined
+    );
 
     try {
       await updateRecipe({ id, body }).unwrap();
-      alert('Recipe updated successfully');
-      router.push('/admin/recipes');
+      alert("Recipe updated successfully");
+      router.push("/admin/recipes");
     } catch (error) {
-      console.error('Failed to update recipe:', error);
-      alert('Failed to update recipe');
+      console.error("Failed to update recipe:", error);
+      alert("Failed to update recipe");
     }
   };
 
@@ -151,7 +172,12 @@ export default function AdminRecipeEditPage() {
               <label htmlFor="name" className="text-sm font-medium">
                 Name
               </label>
-              <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+              <Input
+                id="name"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                required
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -162,7 +188,9 @@ export default function AdminRecipeEditPage() {
                 <Input
                   id="recipeTypeId"
                   value={form.recipeTypeId}
-                  onChange={(e) => setForm({ ...form, recipeTypeId: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, recipeTypeId: e.target.value })
+                  }
                 />
               </div>
 
@@ -174,7 +202,9 @@ export default function AdminRecipeEditPage() {
                   id="calories"
                   type="number"
                   value={form.calories}
-                  onChange={(e) => setForm({ ...form, calories: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, calories: e.target.value })
+                  }
                 />
               </div>
 
@@ -194,7 +224,13 @@ export default function AdminRecipeEditPage() {
                 <label htmlFor="fluffAt" className="text-sm font-medium">
                   Fluff At (ISO string)
                 </label>
-                <Input id="fluffAt" value={form.fluffAt} onChange={(e) => setForm({ ...form, fluffAt: e.target.value })} />
+                <Input
+                  id="fluffAt"
+                  value={form.fluffAt}
+                  onChange={(e) =>
+                    setForm({ ...form, fluffAt: e.target.value })
+                  }
+                />
               </div>
             </div>
 
@@ -206,7 +242,9 @@ export default function AdminRecipeEditPage() {
                 id="description"
                 className="w-full min-h-24 border rounded-md px-3 py-2 text-sm"
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
               />
             </div>
 
@@ -218,7 +256,9 @@ export default function AdminRecipeEditPage() {
                 <Input
                   id="imageCover"
                   value={form.imageCover}
-                  onChange={(e) => setForm({ ...form, imageCover: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, imageCover: e.target.value })
+                  }
                 />
               </div>
 
@@ -229,7 +269,9 @@ export default function AdminRecipeEditPage() {
                 <Input
                   id="imagePreview"
                   value={form.imagePreview}
-                  onChange={(e) => setForm({ ...form, imagePreview: e.target.value })}
+                  onChange={(e) =>
+                    setForm({ ...form, imagePreview: e.target.value })
+                  }
                 />
               </div>
             </div>
@@ -241,14 +283,14 @@ export default function AdminRecipeEditPage() {
               <Input
                 id="promotionalVideo"
                 value={form.promotionalVideo}
-                onChange={(e) => setForm({ ...form, promotionalVideo: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, promotionalVideo: e.target.value })
+                }
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Продукты из базы
-              </label>
+              <label className="text-sm font-medium">Продукты из базы</label>
               <p className="text-xs text-muted-foreground mb-2">
                 Выберите продукты из списка (будут отправлены как productIds)
               </p>
@@ -278,7 +320,10 @@ export default function AdminRecipeEditPage() {
                         className="rounded border-gray-300"
                       />
                       <span className="text-sm">
-                        {p.name} <span className="text-muted-foreground">(ID: {p.id})</span>
+                        {p.name}{" "}
+                        <span className="text-muted-foreground">
+                          (ID: {p.id})
+                        </span>
                       </span>
                     </label>
                   ))
@@ -287,17 +332,23 @@ export default function AdminRecipeEditPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="customProductsJson" className="text-sm font-medium">
+              <label
+                htmlFor="customProductsJson"
+                className="text-sm font-medium"
+              >
                 Кастомные продукты
               </label>
               <p className="text-xs text-muted-foreground mb-1">
-                JSON-массив объектов, например: [{`{"name": "Соль", "amount": "по вкусу"}`}]
+                JSON-массив объектов, например: [
+                {`{"name": "Соль", "amount": "по вкусу"}`}]
               </p>
               <textarea
                 id="customProductsJson"
                 className="w-full min-h-24 border rounded-md px-3 py-2 font-mono text-xs"
                 value={form.customProductsJson}
-                onChange={(e) => setForm({ ...form, customProductsJson: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, customProductsJson: e.target.value })
+                }
                 placeholder={'[{"name": "Соль", "amount": "по вкусу"}]'}
               />
             </div>
@@ -310,15 +361,21 @@ export default function AdminRecipeEditPage() {
                 id="stepsConfigJson"
                 className="w-full min-h-56 border rounded-md px-3 py-2 font-mono text-xs"
                 value={form.stepsConfigJson}
-                onChange={(e) => setForm({ ...form, stepsConfigJson: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, stepsConfigJson: e.target.value })
+                }
               />
             </div>
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? "Saving..." : "Save Changes"}
               </Button>
-              <Button type="button" variant="outline" onClick={() => router.back()}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+              >
                 Cancel
               </Button>
             </div>

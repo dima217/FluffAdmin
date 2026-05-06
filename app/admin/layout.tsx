@@ -1,14 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useAppSelector, useAppDispatch } from '@/lib/hooks';
-import { logout, type AuthState } from '@/lib/features/auth/authSlice';
-import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Users, LogOut, ChefHat, ShoppingCart, MessageSquare, Activity } from 'lucide-react';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAppSelector, useAppDispatch } from "@/lib/hooks";
+import { logout, type AuthState } from "@/lib/features/auth/authSlice";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  Users,
+  LogOut,
+  ChefHat,
+  ShoppingCart,
+  MessageSquare,
+  Activity,
+  LifeBuoy,
+} from "lucide-react";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   const auth = useAppSelector((state) => state.auth) as AuthState | undefined;
   const accessToken = auth?.accessToken ?? null;
@@ -17,15 +30,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     if (!accessToken) {
-      router.push('/login');
+      router.push("/login");
     } else if (!isSuper) {
-      router.push('/');
+      router.push("/");
     }
   }, [accessToken, isSuper, router]);
 
   const handleLogout = () => {
     dispatch(logout());
-    router.push('/login');
+    router.push("/login");
   };
 
   if (!accessToken || !isSuper) {
@@ -50,6 +63,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Button variant="ghost" className="w-full justify-start">
               <Users className="mr-2 h-4 w-4" />
               Users
+            </Button>
+          </Link>
+          <Link href="/admin/support">
+            <Button variant="ghost" className="w-full justify-start">
+              <LifeBuoy className="mr-2 h-4 w-4" />
+              Support
             </Button>
           </Link>
           <Link href="/admin/recipes">
@@ -78,7 +97,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
         </nav>
         <div className="mt-auto pt-4">
-          <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
+          <Button
+            variant="outline"
+            className="w-full justify-start"
+            onClick={handleLogout}
+          >
             <LogOut className="mr-2 h-4 w-4" />
             Logout
           </Button>
@@ -86,9 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 p-8">
-        {children}
-      </main>
+      <main className="flex-1 p-8">{children}</main>
     </div>
   );
 }

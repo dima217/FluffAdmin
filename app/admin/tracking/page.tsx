@@ -1,12 +1,13 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { Trash2, Plus } from 'lucide-react';
-import { useGetAdminTrackingQuery } from '@/lib/features/admin/adminApi';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { Trash2, Plus } from "lucide-react";
+import { useGetAdminTrackingQuery } from "@/lib/features/admin/adminApi";
 
 export default function TrackingPage() {
   const router = useRouter();
@@ -14,12 +15,12 @@ export default function TrackingPage() {
   const { data, isLoading } = useGetAdminTrackingQuery({ page, limit: 10 });
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this tracking record?')) {
+    if (confirm("Are you sure you want to delete this tracking record?")) {
       try {
         // TODO: Implement delete tracking
-        console.log('Delete tracking:', id);
+        console.log("Delete tracking:", id);
       } catch (error) {
-        console.error('Failed to delete tracking:', error);
+        console.error("Failed to delete tracking:", error);
       }
     }
   };
@@ -33,9 +34,11 @@ export default function TrackingPage() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Tracking Management</h1>
-          <p className="text-muted-foreground">Manage all tracking records in the system</p>
+          <p className="text-muted-foreground">
+            Manage all tracking records in the system
+          </p>
         </div>
-        <Button onClick={() => router.push('/admin/tracking/create')}>
+        <Button onClick={() => router.push("/admin/tracking/create")}>
           <Plus className="mr-2 h-4 w-4" />
           Create Tracking
         </Button>
@@ -63,13 +66,21 @@ export default function TrackingPage() {
                 {data?.data.map((tracking: any) => (
                   <tr key={tracking.id} className="border-b hover:bg-gray-50">
                     <td className="p-4">{tracking.id}</td>
-                    <td className="p-4">{tracking.user?.firstName} {tracking.user?.lastName}</td>
+                    <td className="p-4">
+                      {tracking.user?.firstName} {tracking.user?.lastName}
+                    </td>
                     <td className="p-4">{tracking.name}</td>
                     <td className="p-4">{tracking.calories}</td>
-                    <td className="p-4">{tracking.recipe?.name || 'N/A'}</td>
-                    <td className="p-4">{format(new Date(tracking.created), 'MMM dd, yyyy')}</td>
+                    <td className="p-4">{tracking.recipe?.name || "N/A"}</td>
                     <td className="p-4">
-                      <Button size="sm" variant="destructive" onClick={() => handleDelete(tracking.id)}>
+                      {format(new Date(tracking.created), "MMM dd, yyyy")}
+                    </td>
+                    <td className="p-4">
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => handleDelete(tracking.id)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </td>
@@ -82,7 +93,8 @@ export default function TrackingPage() {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <p className="text-sm text-muted-foreground">
-              Showing {data?.data.length || 0} of {data?.total || 0} tracking records
+              Showing {data?.data.length || 0} of {data?.total || 0} tracking
+              records
             </p>
             <div className="flex gap-2">
               <Button
