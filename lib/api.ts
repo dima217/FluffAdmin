@@ -30,7 +30,6 @@ const baseQueryWithReauth: BaseQueryFn<
     const refreshToken = state.auth?.refreshToken;
 
     if (refreshToken) {
-      // Попытка обновить токен
       const refreshResult = await baseQuery(
         {
           url: "/user/refresh",
@@ -42,12 +41,9 @@ const baseQueryWithReauth: BaseQueryFn<
       );
 
       if (refreshResult.data) {
-        // Сохраняем новый токен
         api.dispatch({ type: "auth/setTokens", payload: refreshResult.data });
-        // Повторяем оригинальный запрос
         result = await baseQuery(args, api, extraOptions);
       } else {
-        // Logout если refresh не удался
         api.dispatch({ type: "auth/logout" });
       }
     } else {

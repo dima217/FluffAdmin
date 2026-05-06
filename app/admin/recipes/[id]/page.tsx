@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/alt-text */
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable react-hooks/preserve-manual-memoization */
@@ -14,6 +16,7 @@ import {
   useUpdateAdminRecipeMutation,
   useGetAdminProductsQuery,
 } from "@/lib/features/admin/adminApi";
+import { useMediaUrl } from "@/hooks/useMediaUrl";
 
 export default function AdminRecipeEditPage() {
   const router = useRouter();
@@ -28,6 +31,29 @@ export default function AdminRecipeEditPage() {
     limit: 500,
   });
   const products = productsData?.data ?? [];
+
+  const coverMedia = useMediaUrl(recipe?.image?.cover, {
+    skip: !recipe?.image?.cover,
+  });
+
+  const previewMedia = useMediaUrl(recipe?.image?.preview, {
+    skip: !recipe?.image?.preview,
+  });
+
+  function StepImage({ url }: { url?: string }) {
+    const media = useMediaUrl(url, { skip: !url });
+
+    if (!media.url) return null;
+
+    return (
+      <img
+        src={media.url}
+        alt="step"
+        className="w-full h-70 object-cover rounded-md mt-2"
+        {...(media.headers ? { headers: media.headers } : {})}
+      />
+    );
+  }
 
   const initialStepsJson = useMemo(() => {
     if (!recipe?.stepsConfig) return '{\n  "steps": []\n}';
@@ -260,6 +286,13 @@ export default function AdminRecipeEditPage() {
                     setForm({ ...form, imageCover: e.target.value })
                   }
                 />
+
+                {coverMedia.url && (
+                  <img
+                    src={coverMedia.url}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -273,6 +306,13 @@ export default function AdminRecipeEditPage() {
                     setForm({ ...form, imagePreview: e.target.value })
                   }
                 />
+
+                {previewMedia.url && (
+                  <img
+                    src={previewMedia.url}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                )}
               </div>
             </div>
 
@@ -287,6 +327,14 @@ export default function AdminRecipeEditPage() {
                   setForm({ ...form, promotionalVideo: e.target.value })
                 }
               />
+
+              {form.promotionalVideo && (
+                <video
+                  src={form.promotionalVideo}
+                  controls
+                  className="w-full h-100 rounded-md mt-2"
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -366,6 +414,22 @@ export default function AdminRecipeEditPage() {
                 }
               />
             </div>
+
+            {recipe?.stepsConfig?.steps?.length > 0 && (
+              <div className="space-y-3 mt-3">
+                {recipe.stepsConfig.steps.map((step: any, index: number) => (
+                  <div key={index} className="border p-3 rounded-md">
+                    <div className="text-sm font-medium">
+                      Step {index + 1}: {step.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {step.description}
+                    </div>
+                    <StepImage url={step?.resources?.[0]?.source} />{" "}
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
