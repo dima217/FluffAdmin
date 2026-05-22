@@ -1,56 +1,74 @@
 "use client";
 
-import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { format } from "date-fns";
+import { ArrowLeft, Calendar, Eye, User } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-import { ArrowLeft } from "lucide-react";
+import { SupportChat } from "@/components/support/SupportChat";
+import { cn } from "@/lib/utils";
 
 import {
   useGetSupportTicketByIdQuery,
-  useReplyOnRequestMutation,
   useChangeRequestStatusMutation,
   SupportTicketStatus,
 } from "@/lib/features/admin/adminApi";
+
+const STATUS_STYLES: Record<SupportTicketStatus, string> = {
+  [SupportTicketStatus.OPEN]: "bg-blue-50 text-blue-700 border-blue-200",
+  [SupportTicketStatus.IN_PROGRESS]:
+    "bg-amber-50 text-amber-700 border-amber-200",
+  [SupportTicketStatus.RESOLVED]: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  [SupportTicketStatus.CLOSED]: "bg-gray-100 text-gray-600 border-gray-200",
+};
+
+function StatusBadge({ status }: { status: SupportTicketStatus }) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
+        STATUS_STYLES[status]
+      )}
+    >
+      {status.replace("_", " ")}
+    </span>
+  );
+}
 
 export default function SupportDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = String(params.id);
+  const ticketId = Number(id);
 
   const { data: ticket, isLoading } = useGetSupportTicketByIdQuery(
     { id },
     { skip: !id }
   );
 
-  const [reply, setReply] = useState("");
-
-  const [replyOnRequest, { isLoading: isReplying }] =
-    useReplyOnRequestMutation();
-
   const [changeStatus, { isLoading: isUpdating }] =
     useChangeRequestStatusMutation();
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!ticket) return <div>Ticket not found</div>;
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-muted-foreground">
+        Loading ticket...
+      </div>
+    );
+  }
 
-  const handleReply = async () => {
-    if (!reply.trim()) return;
+  if (!ticket) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] text-muted-foreground">
+        Ticket not found
+      </div>
+    );
+  }
 
-    try {
-      await replyOnRequest({
-        id,
-        response: reply,
-      }).unwrap();
-
-      alert("Reply sent");
-      setReply("");
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const isClosed =
+    ticket.status === SupportTicketStatus.CLOSED ||
+    ticket.status === SupportTicketStatus.RESOLVED;
 
   const handleStatusChange = async (status: SupportTicketStatus) => {
     try {
@@ -65,87 +83,108 @@ export default function SupportDetailPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex items-start gap-4">
+          <Button variant="outline" size="sm" onClick={() => router.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
 
-        <div>
-          <h1 className="text-3xl font-bold">Ticket #{ticket.id}</h1>
-          <p className="text-muted-foreground">Support request details</p>
+          <div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl font-bold tracking-tight">
+                Ticket #{ticket.id}
+              </h1>
+              <StatusBadge status={ticket.status as SupportTicketStatus} />
+            </div>
+            <p className="text-muted-foreground mt-1 max-w-xl">
+              {ticket.subject}
+            </p>
+          </div>
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Ticket Information</CardTitle>
-        </CardHeader>
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
+        <SupportChat
+          ticketId={ticketId}
+          disabled={isClosed}
+          userId={ticket.userId}
+          subject={ticket.subject}
+        />
 
-        <CardContent className="space-y-4">
-          <div>
-            <strong>User ID:</strong> {ticket.userId}
-          </div>
+        <div className="space-y-4">
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Details</CardTitle>
+            </CardHeader>
 
-          <div>
-            <strong>Subject:</strong> {ticket.subject}
-          </div>
+            <CardContent className="space-y-4 text-sm">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+                  <User className="h-4 w-4 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">User</p>
+                  <p className="font-medium">#{ticket.userId}</p>
+                </div>
+              </div>
 
-          <div>
-            <strong>Message:</strong>
-            <p className="mt-1 whitespace-pre-line">{ticket.message}</p>
-          </div>
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+                  <Calendar className="h-4 w-4 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Created</p>
+                  <p className="font-medium">
+                    {format(new Date(ticket.createdAt), "MMM d, yyyy · HH:mm")}
+                  </p>
+                </div>
+              </div>
 
-          <div>
-            <strong>Status:</strong> {ticket.status}
-          </div>
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100">
+                  <Eye className="h-4 w-4 text-gray-600" />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Admin seen</p>
+                  <p className="font-medium">
+                    {ticket.adminSeen ? (
+                      <span className="text-emerald-600">Yes</span>
+                    ) : (
+                      <span className="text-amber-600">Not yet</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div>
-            <strong>Admin Response:</strong>
-            <p className="mt-1 whitespace-pre-line">
-              {ticket.adminResponse || "No response yet"}
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          <Card className="shadow-sm">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Status</CardTitle>
+            </CardHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Change Status</CardTitle>
-        </CardHeader>
-
-        <CardContent className="flex gap-2 flex-wrap">
-          {Object.values(SupportTicketStatus).map((status) => (
-            <Button
-              key={status}
-              variant="outline"
-              disabled={isUpdating}
-              onClick={() => handleStatusChange(status)}
-            >
-              {status}
-            </Button>
-          ))}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Reply to Ticket</CardTitle>
-        </CardHeader>
-
-        <CardContent className="space-y-4">
-          <textarea
-            className="w-full min-h-32 border rounded-md px-3 py-2"
-            placeholder="Write admin response..."
-            value={reply}
-            onChange={(e) => setReply(e.target.value)}
-          />
-
-          <Button onClick={handleReply} disabled={isReplying}>
-            {isReplying ? "Sending..." : "Send Reply"}
-          </Button>
-        </CardContent>
-      </Card>
+            <CardContent className="grid grid-cols-2 gap-2">
+              {Object.values(SupportTicketStatus).map((status) => (
+                <Button
+                  key={status}
+                  variant={ticket.status === status ? "default" : "outline"}
+                  disabled={isUpdating}
+                  onClick={() => handleStatusChange(status)}
+                  className={cn(
+                    "capitalize h-9 text-xs",
+                    ticket.status === status &&
+                      "bg-indigo-600 hover:bg-indigo-700"
+                  )}
+                  size="sm"
+                >
+                  {status.replace("_", " ")}
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

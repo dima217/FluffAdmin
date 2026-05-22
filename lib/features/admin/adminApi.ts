@@ -182,6 +182,17 @@ export const adminApi = api.injectEndpoints({
       query: ({ id }) => `/admin/tickets/${id}`,
       providesTags: ["Support"],
     }),
+    getTicketMessages: builder.query<
+      unknown[],
+      { id: string; limit?: number; beforeId?: number }
+    >({
+      query: ({ id, limit = 50, beforeId }) => {
+        const params = new URLSearchParams({ limit: String(limit) });
+        if (beforeId) params.set("beforeId", String(beforeId));
+        return `/admin/tickets/${id}/messages?${params}`;
+      },
+      providesTags: ["Support"],
+    }),
     replyOnRequest: builder.mutation<
       { response: string },
       { id: string; response: string }
@@ -232,4 +243,6 @@ export const {
   useGetAllSupportTicketsQuery,
   useReplyOnRequestMutation,
   useGetSupportTicketByIdQuery,
+  useGetTicketMessagesQuery,
+  useLazyGetTicketMessagesQuery,
 } = adminApi;

@@ -1,24 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Edit } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 import { useGetAllSupportTicketsQuery } from "@/lib/features/admin/adminApi";
+import { useSupportTicketEvents } from "@/hooks/useSupportTicketEvents";
 
 export default function SupportPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
 
-  const { data, isLoading } = useGetAllSupportTicketsQuery({
+  const { data, isLoading, refetch } = useGetAllSupportTicketsQuery({
     page,
     limit: 10,
   });
+
+  const handleTicketEvent = useCallback(() => {
+    void refetch();
+  }, [refetch]);
+
+  useSupportTicketEvents(handleTicketEvent);
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -43,6 +50,7 @@ export default function SupportPage() {
                   <th className="text-left p-4">User ID</th>
                   <th className="text-left p-4">Subject</th>
                   <th className="text-left p-4">Status</th>
+                  <th className="text-left p-4">Seen</th>
                   <th className="text-left p-4">Created</th>
                   <th className="text-left p-4">Actions</th>
                 </tr>
@@ -53,8 +61,17 @@ export default function SupportPage() {
                   <tr key={ticket.id} className="border-b hover:bg-gray-50">
                     <td className="p-4">{ticket.id}</td>
                     <td className="p-4">{ticket.userId}</td>
-                    <td className="p-4">{ticket.subject}</td>
-                    <td className="p-4">{ticket.status}</td>
+                    <td className="p-4 max-w-xs truncate">{ticket.subject}</td>
+                    <td className="p-4 capitalize">
+                      {String(ticket.status).replace("_", " ")}
+                    </td>
+                    <td className="p-4">
+                      {ticket.adminSeen ? (
+                        <span className="text-muted-foreground">Seen</span>
+                      ) : (
+                        <span className="text-orange-600 font-medium">New</span>
+                      )}
+                    </td>
                     <td className="p-4">
                       {format(new Date(ticket.createdAt), "MMM dd, yyyy")}
                     </td>
@@ -66,7 +83,7 @@ export default function SupportPage() {
                           router.push(`/admin/support/${ticket.id}`)
                         }
                       >
-                        <Edit className="h-4 w-4" />
+                        <MessageSquare className="h-4 w-4" />
                       </Button>
                     </td>
                   </tr>
@@ -93,7 +110,7 @@ export default function SupportPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setPage(page + 1)}
-                disabled={!data || data.tickets.length <= 10}
+                disabled={!data || data.tickets.length < 10}
               >
                 Next
               </Button>

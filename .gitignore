@@ -44,4 +44,5 @@ lerna-debug.log*
 
 # Misc
 .husky/_
+package-lock.json
 

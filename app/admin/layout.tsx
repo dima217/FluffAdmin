@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { logout, type AuthState } from "@/lib/features/auth/authSlice";
+import { useSupportSocket } from "@/hooks/useSupportSocket";
 import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
@@ -27,6 +28,8 @@ export default function AdminLayout({
   const accessToken = auth?.accessToken ?? null;
   const isSuper = auth?.isSuper ?? false;
   const dispatch = useAppDispatch();
+
+  useSupportSocket();
 
   useEffect(() => {
     if (!accessToken) {

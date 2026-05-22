@@ -3,7 +3,7 @@ export const API_CONFIG = {
   // Development
   baseUrl: "http://10.188.8.195:3000",
 
-  mediaBaseUrl: "http://10.188.8.195:3002",
+  mediaBaseUrl: "http://10.132.93.195:3002",
 
   // Timeouts
   timeout: 30000, // 30 seconds
