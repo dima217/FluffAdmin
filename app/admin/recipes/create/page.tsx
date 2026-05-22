@@ -47,7 +47,7 @@ export default function AdminRecipeCreatePage() {
         ? JSON.parse(form.stepsConfigJson)
         : { steps: [] };
     } catch {
-      alert("stepsConfig JSON is invalid");
+      alert("JSON stepsConfig некорректен");
       return;
     }
 
@@ -58,7 +58,7 @@ export default function AdminRecipeCreatePage() {
         : [];
       if (!Array.isArray(customProducts)) customProducts = [];
     } catch {
-      alert("Custom products JSON is invalid");
+      alert("JSON кастомных продуктов некорректен");
       return;
     }
 
@@ -81,7 +81,7 @@ export default function AdminRecipeCreatePage() {
 
     try {
       const created = await createRecipe(body).unwrap();
-      alert("Recipe created successfully");
+      alert("Рецепт успешно создан");
       if (created?.id) {
         router.push(`/admin/recipes/${created.id}`);
       } else {
@@ -90,7 +90,7 @@ export default function AdminRecipeCreatePage() {
     } catch (err) {
       console.error("Failed to create recipe:", err);
 
-      let errorMessage = "Something went wrong";
+      let errorMessage = "Что-то пошло не так";
 
       const error = err as FetchBaseQueryError | SerializedError;
 
@@ -105,7 +105,7 @@ export default function AdminRecipeCreatePage() {
         } else if (data?.error) {
           errorMessage = data.error;
         } else {
-          errorMessage = `Error ${error.status}`;
+          errorMessage = `Ошибка ${error.status}`;
         }
       } else if (error.message) {
         // SerializedError
@@ -121,23 +121,23 @@ export default function AdminRecipeCreatePage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Create Recipe</h1>
-          <p className="text-muted-foreground">Add a new recipe</p>
+          <h1 className="text-3xl font-bold">Создание рецепта</h1>
+          <p className="text-muted-foreground">Добавление нового рецепта</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recipe Details</CardTitle>
+          <CardTitle>Данные рецепта</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
-                Name
+                Название
               </label>
               <Input
                 id="name"
@@ -150,7 +150,7 @@ export default function AdminRecipeCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="recipeTypeId" className="text-sm font-medium">
-                  Recipe Type ID
+                  ID типа рецепта
                 </label>
                 <Input
                   id="recipeTypeId"
@@ -164,7 +164,7 @@ export default function AdminRecipeCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="calories" className="text-sm font-medium">
-                  Calories
+                  Калории
                 </label>
                 <Input
                   id="calories"
@@ -179,7 +179,7 @@ export default function AdminRecipeCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="cookAt" className="text-sm font-medium">
-                  Cook Time (seconds)
+                  Время приготовления (сек)
                 </label>
                 <Input
                   id="cookAt"
@@ -192,7 +192,7 @@ export default function AdminRecipeCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="fluffAt" className="text-sm font-medium">
-                  Fluff At (ISO string)
+                  Fluff At (ISO строка)
                 </label>
                 <Input
                   id="fluffAt"
@@ -206,7 +206,7 @@ export default function AdminRecipeCreatePage() {
 
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">
-                Description
+                Описание
               </label>
               <textarea
                 id="description"
@@ -221,7 +221,7 @@ export default function AdminRecipeCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="imageCover" className="text-sm font-medium">
-                  Image Cover URL
+                  URL обложки
                 </label>
                 <Input
                   id="imageCover"
@@ -235,7 +235,7 @@ export default function AdminRecipeCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="imagePreview" className="text-sm font-medium">
-                  Image Preview URL
+                  URL превью
                 </label>
                 <Input
                   id="imagePreview"
@@ -250,7 +250,7 @@ export default function AdminRecipeCreatePage() {
 
             <div className="space-y-2">
               <label htmlFor="promotionalVideo" className="text-sm font-medium">
-                Promotional Video URL
+                URL промо-видео
               </label>
               <Input
                 id="promotionalVideo"
@@ -322,7 +322,7 @@ export default function AdminRecipeCreatePage() {
 
             <div className="space-y-2">
               <label htmlFor="stepsConfigJson" className="text-sm font-medium">
-                Steps Config (JSON)
+                Конфигурация шагов (JSON)
               </label>
               <textarea
                 id="stepsConfigJson"
@@ -336,14 +336,14 @@ export default function AdminRecipeCreatePage() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? "Creating..." : "Create"}
+                {isSaving ? "Создание..." : "Создать"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
               >
-                Cancel
+                Отмена
               </Button>
             </div>
           </form>

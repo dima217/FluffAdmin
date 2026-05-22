@@ -61,7 +61,7 @@ function AttachmentFile({
     >
       <FileText className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate max-w-[200px]">
-        {attachment.name ?? "Download file"}
+        {attachment.name ?? "Скачать файл"}
       </span>
     </a>
   );
@@ -117,7 +117,7 @@ export function PendingFileChip({
         type="button"
         onClick={onRemove}
         className="text-muted-foreground hover:text-foreground ml-0.5"
-        aria-label="Remove file"
+        aria-label="Удалить файл"
       >
         ×
       </button>

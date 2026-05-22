@@ -42,7 +42,7 @@ export default function AdminProductCreatePage() {
 
     try {
       const created = await createProduct(body).unwrap();
-      alert('Product created successfully');
+      alert('Продукт успешно создан');
       if (created?.id) {
         router.push(`/admin/products/${created.id}`);
       } else {
@@ -50,7 +50,7 @@ export default function AdminProductCreatePage() {
       }
     } catch (error) {
       console.error('Failed to create product:', error);
-      alert('Failed to create product');
+      alert('Не удалось создать продукт');
     }
   };
 
@@ -59,23 +59,23 @@ export default function AdminProductCreatePage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Create Product</h1>
-          <p className="text-muted-foreground">Add a new product</p>
+          <h1 className="text-3xl font-bold">Создание продукта</h1>
+          <p className="text-muted-foreground">Добавление нового продукта</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Product Details</CardTitle>
+          <CardTitle>Данные продукта</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
-                Name
+                Название
               </label>
               <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             </div>
@@ -83,7 +83,7 @@ export default function AdminProductCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="calories" className="text-sm font-medium">
-                  Calories
+                  Калории
                 </label>
                 <Input
                   id="calories"
@@ -96,7 +96,7 @@ export default function AdminProductCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="massa" className="text-sm font-medium">
-                  Mass (g)
+                  Масса (г)
                 </label>
                 <Input
                   id="massa"
@@ -109,7 +109,7 @@ export default function AdminProductCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="fluffAt" className="text-sm font-medium">
-                  Fluff At (ISO string)
+                  Fluff At (ISO строка)
                 </label>
                 <Input id="fluffAt" value={form.fluffAt} onChange={(e) => setForm({ ...form, fluffAt: e.target.value })} />
               </div>
@@ -118,7 +118,7 @@ export default function AdminProductCreatePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="imageCover" className="text-sm font-medium">
-                  Image Cover URL
+                  URL обложки
                 </label>
                 <Input
                   id="imageCover"
@@ -129,7 +129,7 @@ export default function AdminProductCreatePage() {
 
               <div className="space-y-2">
                 <label htmlFor="imagePreview" className="text-sm font-medium">
-                  Image Preview URL
+                  URL превью
                 </label>
                 <Input
                   id="imagePreview"
@@ -141,10 +141,10 @@ export default function AdminProductCreatePage() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? 'Creating...' : 'Create'}
+                {isSaving ? 'Создание...' : 'Создать'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.back()}>
-                Cancel
+                Отмена
               </Button>
             </div>
           </form>

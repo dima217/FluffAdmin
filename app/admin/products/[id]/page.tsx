@@ -58,39 +58,39 @@ export default function AdminProductEditPage() {
 
     try {
       await updateProduct({ id, body }).unwrap();
-      alert('Product updated successfully');
+      alert('Продукт успешно обновлён');
       router.push('/admin/products');
     } catch (error) {
       console.error('Failed to update product:', error);
-      alert('Failed to update product');
+      alert('Не удалось обновить продукт');
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!product) return <div>Product not found</div>;
+  if (isLoading) return <div>Загрузка...</div>;
+  if (!product) return <div>Продукт не найден</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Edit Product</h1>
-          <p className="text-muted-foreground">Update product details</p>
+          <h1 className="text-3xl font-bold">Редактирование продукта</h1>
+          <p className="text-muted-foreground">Изменение данных продукта</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Product Details</CardTitle>
+          <CardTitle>Данные продукта</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
-                Name
+                Название
               </label>
               <Input id="name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             </div>
@@ -98,7 +98,7 @@ export default function AdminProductEditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="calories" className="text-sm font-medium">
-                  Calories
+                  Калории
                 </label>
                 <Input
                   id="calories"
@@ -110,7 +110,7 @@ export default function AdminProductEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="massa" className="text-sm font-medium">
-                  Mass (g)
+                  Масса (г)
                 </label>
                 <Input
                   id="massa"
@@ -122,7 +122,7 @@ export default function AdminProductEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="fluffAt" className="text-sm font-medium">
-                  Fluff At (ISO string)
+                  Fluff At (ISO строка)
                 </label>
                 <Input id="fluffAt" value={form.fluffAt} onChange={(e) => setForm({ ...form, fluffAt: e.target.value })} />
               </div>
@@ -131,7 +131,7 @@ export default function AdminProductEditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="imageCover" className="text-sm font-medium">
-                  Image Cover URL
+                  URL обложки
                 </label>
                 <Input
                   id="imageCover"
@@ -142,7 +142,7 @@ export default function AdminProductEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="imagePreview" className="text-sm font-medium">
-                  Image Preview URL
+                  URL превью
                 </label>
                 <Input
                   id="imagePreview"
@@ -154,10 +154,10 @@ export default function AdminProductEditPage() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.back()}>
-                Cancel
+                Отмена
               </Button>
             </div>
           </form>

@@ -47,7 +47,7 @@ export default function MarketingPage() {
 
       <footer className="border-t py-6">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © 2025 Fluff Admin. All rights reserved.
+          © 2025 Fluff Admin. Все права защищены.
         </div>
       </footer>
     </div>

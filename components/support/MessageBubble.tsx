@@ -44,7 +44,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
         )}
       >
         <span className="text-[11px] font-medium text-muted-foreground mb-1 px-1">
-          {isOwn ? "You" : "User"}
+          {isOwn ? "Вы" : "Пользователь"}
         </span>
 
         <div
@@ -76,7 +76,7 @@ export function MessageBubble({ message, isOwn }: MessageBubbleProps) {
 
         <p className="text-[11px] text-muted-foreground mt-1 px-1">
           {format(new Date(message.createdAt), "HH:mm")}
-          {message.editedAt && " · edited"}
+          {message.editedAt && " · изменено"}
         </p>
       </div>
     </div>

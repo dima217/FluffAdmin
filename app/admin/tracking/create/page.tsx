@@ -13,25 +13,25 @@ export default function AdminTrackingCreatePage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Create Tracking</h1>
-          <p className="text-muted-foreground">This feature is not implemented on the backend yet</p>
+          <h1 className="text-3xl font-bold">Создание записи трекинга</h1>
+          <p className="text-muted-foreground">Эта функция пока не реализована на бэкенде</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Not available</CardTitle>
+          <CardTitle>Недоступно</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Backend endpoint for creating tracking records is not implemented (see /admin/tracking in backend).
+              Эндпоинт бэкенда для создания записей трекинга не реализован (см. /admin/tracking в бэкенде).
             </p>
             <Button variant="outline" onClick={() => router.push('/admin/tracking')}>
-              Go to Tracking
+              Перейти к трекингу
             </Button>
           </div>
         </CardContent>

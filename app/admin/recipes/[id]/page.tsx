@@ -123,7 +123,7 @@ export default function AdminRecipeEditPage() {
         ? JSON.parse(form.stepsConfigJson)
         : undefined;
     } catch {
-      alert("stepsConfig JSON is invalid");
+      alert("JSON stepsConfig некорректен");
       return;
     }
 
@@ -134,7 +134,7 @@ export default function AdminRecipeEditPage() {
         : [];
       if (!Array.isArray(customProducts)) customProducts = [];
     } catch {
-      alert("Custom products JSON is invalid");
+      alert("JSON кастомных продуктов некорректен");
       return;
     }
 
@@ -164,39 +164,39 @@ export default function AdminRecipeEditPage() {
 
     try {
       await updateRecipe({ id, body }).unwrap();
-      alert("Recipe updated successfully");
+      alert("Рецепт успешно обновлён");
       router.push("/admin/recipes");
     } catch (error) {
       console.error("Failed to update recipe:", error);
-      alert("Failed to update recipe");
+      alert("Не удалось обновить рецепт");
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (!recipe) return <div>Recipe not found</div>;
+  if (isLoading) return <div>Загрузка...</div>;
+  if (!recipe) return <div>Рецепт не найден</div>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Edit Recipe</h1>
-          <p className="text-muted-foreground">Update recipe details</p>
+          <h1 className="text-3xl font-bold">Редактирование рецепта</h1>
+          <p className="text-muted-foreground">Изменение данных рецепта</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Recipe Details</CardTitle>
+          <CardTitle>Данные рецепта</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium">
-                Name
+                Название
               </label>
               <Input
                 id="name"
@@ -209,7 +209,7 @@ export default function AdminRecipeEditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="recipeTypeId" className="text-sm font-medium">
-                  Recipe Type ID
+                  ID типа рецепта
                 </label>
                 <Input
                   id="recipeTypeId"
@@ -222,7 +222,7 @@ export default function AdminRecipeEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="calories" className="text-sm font-medium">
-                  Calories
+                  Калории
                 </label>
                 <Input
                   id="calories"
@@ -236,7 +236,7 @@ export default function AdminRecipeEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="cookAt" className="text-sm font-medium">
-                  Cook Time (seconds)
+                  Время приготовления (сек)
                 </label>
                 <Input
                   id="cookAt"
@@ -248,7 +248,7 @@ export default function AdminRecipeEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="fluffAt" className="text-sm font-medium">
-                  Fluff At (ISO string)
+                  Fluff At (ISO строка)
                 </label>
                 <Input
                   id="fluffAt"
@@ -262,7 +262,7 @@ export default function AdminRecipeEditPage() {
 
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">
-                Description
+                Описание
               </label>
               <textarea
                 id="description"
@@ -277,7 +277,7 @@ export default function AdminRecipeEditPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label htmlFor="imageCover" className="text-sm font-medium">
-                  Image Cover URL
+                  URL обложки
                 </label>
                 <Input
                   id="imageCover"
@@ -297,7 +297,7 @@ export default function AdminRecipeEditPage() {
 
               <div className="space-y-2">
                 <label htmlFor="imagePreview" className="text-sm font-medium">
-                  Image Preview URL
+                  URL превью
                 </label>
                 <Input
                   id="imagePreview"
@@ -318,7 +318,7 @@ export default function AdminRecipeEditPage() {
 
             <div className="space-y-2">
               <label htmlFor="promotionalVideo" className="text-sm font-medium">
-                Promotional Video URL
+                URL промо-видео
               </label>
               <Input
                 id="promotionalVideo"
@@ -403,7 +403,7 @@ export default function AdminRecipeEditPage() {
 
             <div className="space-y-2">
               <label htmlFor="stepsConfigJson" className="text-sm font-medium">
-                Steps Config (JSON)
+                Конфигурация шагов (JSON)
               </label>
               <textarea
                 id="stepsConfigJson"
@@ -420,7 +420,7 @@ export default function AdminRecipeEditPage() {
                 {recipe.stepsConfig.steps.map((step: any, index: number) => (
                   <div key={index} className="border p-3 rounded-md">
                     <div className="text-sm font-medium">
-                      Step {index + 1}: {step.name}
+                      Шаг {index + 1}: {step.name}
                     </div>
                     <div className="text-xs text-muted-foreground">
                       {step.description}
@@ -433,14 +433,14 @@ export default function AdminRecipeEditPage() {
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save Changes"}
+                {isSaving ? "Сохранение..." : "Сохранить изменения"}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => router.back()}
               >
-                Cancel
+                Отмена
               </Button>
             </div>
           </form>

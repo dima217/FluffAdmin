@@ -1,13 +1,14 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { format } from "date-fns";
 import { ArrowLeft, Calendar, Eye, User } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SupportChat } from "@/components/support/SupportChat";
 import { cn } from "@/lib/utils";
+import { TICKET_STATUS_LABELS } from "@/lib/adminLabels";
+import { formatDateTimeRu } from "@/lib/formatDate";
 
 import {
   useGetSupportTicketByIdQuery,
@@ -27,11 +28,11 @@ function StatusBadge({ status }: { status: SupportTicketStatus }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize",
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium",
         STATUS_STYLES[status]
       )}
     >
-      {status.replace("_", " ")}
+      {TICKET_STATUS_LABELS[status]}
     </span>
   );
 }
@@ -53,7 +54,7 @@ export default function SupportDetailPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px] text-muted-foreground">
-        Loading ticket...
+        Загрузка тикета...
       </div>
     );
   }
@@ -61,7 +62,7 @@ export default function SupportDetailPage() {
   if (!ticket) {
     return (
       <div className="flex items-center justify-center min-h-[400px] text-muted-foreground">
-        Ticket not found
+        Тикет не найден
       </div>
     );
   }
@@ -87,13 +88,13 @@ export default function SupportDetailPage() {
         <div className="flex items-start gap-4">
           <Button variant="outline" size="sm" onClick={() => router.back()}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Назад
           </Button>
 
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-bold tracking-tight">
-                Ticket #{ticket.id}
+                Тикет #{ticket.id}
               </h1>
               <StatusBadge status={ticket.status as SupportTicketStatus} />
             </div>
@@ -115,7 +116,7 @@ export default function SupportDetailPage() {
         <div className="space-y-4">
           <Card className="shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Details</CardTitle>
+              <CardTitle className="text-base">Детали</CardTitle>
             </CardHeader>
 
             <CardContent className="space-y-4 text-sm">
@@ -124,7 +125,7 @@ export default function SupportDetailPage() {
                   <User className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">User</p>
+                  <p className="text-xs text-muted-foreground">Пользователь</p>
                   <p className="font-medium">#{ticket.userId}</p>
                 </div>
               </div>
@@ -134,9 +135,9 @@ export default function SupportDetailPage() {
                   <Calendar className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Created</p>
+                  <p className="text-xs text-muted-foreground">Создан</p>
                   <p className="font-medium">
-                    {format(new Date(ticket.createdAt), "MMM d, yyyy · HH:mm")}
+                    {formatDateTimeRu(ticket.createdAt)}
                   </p>
                 </div>
               </div>
@@ -146,12 +147,12 @@ export default function SupportDetailPage() {
                   <Eye className="h-4 w-4 text-gray-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground">Admin seen</p>
+                  <p className="text-xs text-muted-foreground">Просмотрен админом</p>
                   <p className="font-medium">
                     {ticket.adminSeen ? (
-                      <span className="text-emerald-600">Yes</span>
+                      <span className="text-emerald-600">Да</span>
                     ) : (
-                      <span className="text-amber-600">Not yet</span>
+                      <span className="text-amber-600">Ещё нет</span>
                     )}
                   </p>
                 </div>
@@ -161,7 +162,7 @@ export default function SupportDetailPage() {
 
           <Card className="shadow-sm">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base">Status</CardTitle>
+              <CardTitle className="text-base">Статус</CardTitle>
             </CardHeader>
 
             <CardContent className="grid grid-cols-2 gap-2">
@@ -172,13 +173,13 @@ export default function SupportDetailPage() {
                   disabled={isUpdating}
                   onClick={() => handleStatusChange(status)}
                   className={cn(
-                    "capitalize h-9 text-xs",
+                    "h-9 text-xs",
                     ticket.status === status &&
                       "bg-indigo-600 hover:bg-indigo-700"
                   )}
                   size="sm"
                 >
-                  {status.replace("_", " ")}
+                  {TICKET_STATUS_LABELS[status]}
                 </Button>
               ))}
             </CardContent>

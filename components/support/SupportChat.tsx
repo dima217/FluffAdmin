@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { format, isToday, isYesterday } from "date-fns";
 import { Loader2, MessageSquare } from "lucide-react";
 import { useSupportChat } from "@/hooks/useSupportChat";
 import type { SupportMessageDto } from "@/types/support";
+import { formatChatDateLabel } from "@/lib/formatDate";
 import { MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
 import { TypingIndicator } from "./TypingIndicator";
@@ -16,17 +16,11 @@ interface SupportChatProps {
   subject?: string;
 }
 
-function formatDateLabel(date: Date): string {
-  if (isToday(date)) return "Today";
-  if (isYesterday(date)) return "Yesterday";
-  return format(date, "MMMM d, yyyy");
-}
-
 function groupMessagesByDate(messages: SupportMessageDto[]) {
   const groups: { label: string; messages: SupportMessageDto[] }[] = [];
 
   for (const message of messages) {
-    const label = formatDateLabel(new Date(message.createdAt));
+    const label = formatChatDateLabel(new Date(message.createdAt));
     const last = groups[groups.length - 1];
 
     if (last?.label === label) {
@@ -71,11 +65,11 @@ export function SupportChat({
             </div>
             <div className="min-w-0">
               <p className="font-semibold text-sm truncate">
-                {subject ?? `Ticket #${ticketId}`}
+                {subject ?? `Тикет #${ticketId}`}
               </p>
               {userId != null && (
                 <p className="text-xs text-muted-foreground">
-                  User #{userId}
+                  Пользователь #{userId}
                 </p>
               )}
             </div>
@@ -83,7 +77,7 @@ export function SupportChat({
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs text-muted-foreground">Live</span>
+          <span className="text-xs text-muted-foreground">Онлайн</span>
         </div>
       </div>
 
@@ -91,7 +85,7 @@ export function SupportChat({
         {isLoadingMessages ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground">
             <Loader2 className="h-6 w-6 animate-spin" />
-            <p className="text-sm">Loading conversation...</p>
+            <p className="text-sm">Загрузка переписки...</p>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-center px-6">
@@ -99,9 +93,9 @@ export function SupportChat({
               <MessageSquare className="h-6 w-6 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-medium text-sm">No messages yet</p>
+              <p className="font-medium text-sm">Сообщений пока нет</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Start the conversation with the user
+                Начните переписку с пользователем
               </p>
             </div>
           </div>
@@ -134,7 +128,7 @@ export function SupportChat({
 
       {disabled ? (
         <div className="border-t bg-muted/40 px-5 py-3 text-center text-sm text-muted-foreground">
-          This ticket is closed — chat is read-only
+          Тикет закрыт — чат только для чтения
         </div>
       ) : (
         <ChatInput

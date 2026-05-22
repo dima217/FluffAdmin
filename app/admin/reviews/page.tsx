@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
 import { Trash2, Plus } from 'lucide-react';
 import { useGetAdminReviewsQuery } from '@/lib/features/admin/adminApi';
+import { formatDateRu } from '@/lib/formatDate';
 
 export default function ReviewsPage() {
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function ReviewsPage() {
   const { data, isLoading } = useGetAdminReviewsQuery({ page, limit: 10 });
 
   const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this review?')) {
+    if (confirm('Удалить этот отзыв?')) {
       try {
         // TODO: Implement delete review
         console.log('Delete review:', id);
@@ -25,25 +25,25 @@ export default function ReviewsPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Загрузка...</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Reviews Management</h1>
-          <p className="text-muted-foreground">Manage all reviews in the system</p>
+          <h1 className="text-3xl font-bold">Управление отзывами</h1>
+          <p className="text-muted-foreground">Управление всеми отзывами в системе</p>
         </div>
         <Button onClick={() => router.push('/admin/reviews/create')}>
           <Plus className="mr-2 h-4 w-4" />
-          Create Review
+          Создать отзыв
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Reviews</CardTitle>
+          <CardTitle>Все отзывы</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -51,12 +51,12 @@ export default function ReviewsPage() {
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-4">ID</th>
-                  <th className="text-left p-4">User</th>
-                  <th className="text-left p-4">Entity Type</th>
-                  <th className="text-left p-4">Score</th>
-                  <th className="text-left p-4">Message</th>
-                  <th className="text-left p-4">Created</th>
-                  <th className="text-left p-4">Actions</th>
+                  <th className="text-left p-4">Пользователь</th>
+                  <th className="text-left p-4">Тип сущности</th>
+                  <th className="text-left p-4">Оценка</th>
+                  <th className="text-left p-4">Сообщение</th>
+                  <th className="text-left p-4">Создан</th>
+                  <th className="text-left p-4">Действия</th>
                 </tr>
               </thead>
               <tbody>
@@ -69,12 +69,12 @@ export default function ReviewsPage() {
                           review.user.username ||
                           review.user.email ||
                           `#${review.user.id}`
-                        : 'N/A'}
+                        : '—'}
                     </td>
                     <td className="p-4">{review.relatedEntityType}</td>
                     <td className="p-4">{review.score}</td>
-                    <td className="p-4 max-w-xs truncate">{review.message || 'N/A'}</td>
-                    <td className="p-4">{format(new Date(review.created), 'MMM dd, yyyy')}</td>
+                    <td className="p-4 max-w-xs truncate">{review.message || '—'}</td>
+                    <td className="p-4">{formatDateRu(review.created)}</td>
                     <td className="p-4">
                       <Button size="sm" variant="destructive" onClick={() => handleDelete(review.id)}>
                         <Trash2 className="h-4 w-4" />
@@ -89,7 +89,7 @@ export default function ReviewsPage() {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <p className="text-sm text-muted-foreground">
-              Showing {data?.data.length || 0} of {data?.total || 0} reviews
+              Показано {data?.data.length || 0} из {data?.total || 0} отзывов
             </p>
             <div className="flex gap-2">
               <Button
@@ -98,7 +98,7 @@ export default function ReviewsPage() {
                 onClick={() => setPage(page - 1)}
                 disabled={page === 1}
               >
-                Previous
+                Назад
               </Button>
               <Button
                 variant="outline"
@@ -106,7 +106,7 @@ export default function ReviewsPage() {
                 onClick={() => setPage(page + 1)}
                 disabled={!data || data.data.length < 10}
               >
-                Next
+                Далее
               </Button>
             </div>
           </div>

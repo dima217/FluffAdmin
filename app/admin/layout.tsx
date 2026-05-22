@@ -50,52 +50,51 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen flex">
-      {/* Sidebar */}
       <aside className="w-64 border-r bg-gray-50 p-4 flex flex-col relative">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold">Admin Panel</h1>
+          <h1 className="text-2xl font-bold">Админ-панель</h1>
         </div>
         <nav className="space-y-2 flex-1">
           <Link href="/admin">
             <Button variant="ghost" className="w-full justify-start">
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
+              Дашборд
             </Button>
           </Link>
           <Link href="/admin/users">
             <Button variant="ghost" className="w-full justify-start">
               <Users className="mr-2 h-4 w-4" />
-              Users
+              Пользователи
             </Button>
           </Link>
           <Link href="/admin/support">
             <Button variant="ghost" className="w-full justify-start">
               <LifeBuoy className="mr-2 h-4 w-4" />
-              Support
+              Поддержка
             </Button>
           </Link>
           <Link href="/admin/recipes">
             <Button variant="ghost" className="w-full justify-start">
               <ChefHat className="mr-2 h-4 w-4" />
-              Recipes
+              Рецепты
             </Button>
           </Link>
           <Link href="/admin/products">
             <Button variant="ghost" className="w-full justify-start">
               <ShoppingCart className="mr-2 h-4 w-4" />
-              Products
+              Продукты
             </Button>
           </Link>
           <Link href="/admin/reviews">
             <Button variant="ghost" className="w-full justify-start">
               <MessageSquare className="mr-2 h-4 w-4" />
-              Reviews
+              Отзывы
             </Button>
           </Link>
           <Link href="/admin/tracking">
             <Button variant="ghost" className="w-full justify-start">
               <Activity className="mr-2 h-4 w-4" />
-              Tracking
+              Трекинг
             </Button>
           </Link>
         </nav>
@@ -106,12 +105,11 @@ export default function AdminLayout({
             onClick={handleLogout}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            Выйти
           </Button>
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="flex-1 p-8">{children}</main>
     </div>
   );

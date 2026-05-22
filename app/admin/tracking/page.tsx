@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
 import { Trash2, Plus } from "lucide-react";
 import { useGetAdminTrackingQuery } from "@/lib/features/admin/adminApi";
+import { formatDateRu } from "@/lib/formatDate";
 
 export default function TrackingPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function TrackingPage() {
   const { data, isLoading } = useGetAdminTrackingQuery({ page, limit: 10 });
 
   const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this tracking record?")) {
+    if (confirm("Удалить эту запись трекинга?")) {
       try {
         // TODO: Implement delete tracking
         console.log("Delete tracking:", id);
@@ -26,27 +26,27 @@ export default function TrackingPage() {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Загрузка...</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Tracking Management</h1>
+          <h1 className="text-3xl font-bold">Управление трекингом</h1>
           <p className="text-muted-foreground">
-            Manage all tracking records in the system
+            Управление всеми записями трекинга в системе
           </p>
         </div>
         <Button onClick={() => router.push("/admin/tracking/create")}>
           <Plus className="mr-2 h-4 w-4" />
-          Create Tracking
+          Создать запись
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Tracking Records</CardTitle>
+          <CardTitle>Все записи трекинга</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
@@ -54,12 +54,12 @@ export default function TrackingPage() {
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-4">ID</th>
-                  <th className="text-left p-4">User</th>
-                  <th className="text-left p-4">Name</th>
-                  <th className="text-left p-4">Calories</th>
-                  <th className="text-left p-4">Recipe</th>
-                  <th className="text-left p-4">Created</th>
-                  <th className="text-left p-4">Actions</th>
+                  <th className="text-left p-4">Пользователь</th>
+                  <th className="text-left p-4">Название</th>
+                  <th className="text-left p-4">Калории</th>
+                  <th className="text-left p-4">Рецепт</th>
+                  <th className="text-left p-4">Создан</th>
+                  <th className="text-left p-4">Действия</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,9 +71,9 @@ export default function TrackingPage() {
                     </td>
                     <td className="p-4">{tracking.name}</td>
                     <td className="p-4">{tracking.calories}</td>
-                    <td className="p-4">{tracking.recipe?.name || "N/A"}</td>
+                    <td className="p-4">{tracking.recipe?.name || "—"}</td>
                     <td className="p-4">
-                      {format(new Date(tracking.created), "MMM dd, yyyy")}
+                      {formatDateRu(tracking.created)}
                     </td>
                     <td className="p-4">
                       <Button
@@ -93,8 +93,8 @@ export default function TrackingPage() {
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <p className="text-sm text-muted-foreground">
-              Showing {data?.data.length || 0} of {data?.total || 0} tracking
-              records
+              Показано {data?.data.length || 0} из {data?.total || 0} записей
+              трекинга
             </p>
             <div className="flex gap-2">
               <Button
@@ -103,7 +103,7 @@ export default function TrackingPage() {
                 onClick={() => setPage(page - 1)}
                 disabled={page === 1}
               >
-                Previous
+                Назад
               </Button>
               <Button
                 variant="outline"
@@ -111,7 +111,7 @@ export default function TrackingPage() {
                 onClick={() => setPage(page + 1)}
                 disabled={!data || data.data.length < 10}
               >
-                Next
+                Далее
               </Button>
             </div>
           </div>

@@ -28,20 +28,20 @@ export default function UserDetailPage() {
     e.preventDefault();
     try {
       await updateUser({ id, data: formData }).unwrap();
-      alert('User updated successfully');
+      alert('Пользователь успешно обновлён');
       router.push('/admin/users');
     } catch (error) {
       console.error('Failed to update user:', error);
-      alert('Failed to update user');
+      alert('Не удалось обновить пользователя');
     }
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Загрузка...</div>;
   }
 
   if (!user) {
-    return <div>User not found</div>;
+    return <div>Пользователь не найден</div>;
   }
 
   // Update form when data loads
@@ -60,23 +60,23 @@ export default function UserDetailPage() {
       <div className="flex items-center gap-4">
         <Button variant="outline" size="sm" onClick={() => router.back()}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Назад
         </Button>
         <div>
-          <h1 className="text-3xl font-bold">Edit User</h1>
-          <p className="text-muted-foreground">Update user details</p>
+          <h1 className="text-3xl font-bold">Редактирование пользователя</h1>
+          <p className="text-muted-foreground">Изменение данных пользователя</p>
         </div>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>User Details</CardTitle>
+          <CardTitle>Данные пользователя</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="firstName" className="text-sm font-medium">
-                First Name
+                Имя
               </label>
               <Input
                 id="firstName"
@@ -88,7 +88,7 @@ export default function UserDetailPage() {
 
             <div className="space-y-2">
               <label htmlFor="lastName" className="text-sm font-medium">
-                Last Name
+                Фамилия
               </label>
               <Input
                 id="lastName"
@@ -119,7 +119,7 @@ export default function UserDetailPage() {
                   onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                   className="w-4 h-4"
                 />
-                <span className="text-sm font-medium">Active</span>
+                <span className="text-sm font-medium">Активен</span>
               </label>
             </div>
 
@@ -131,16 +131,16 @@ export default function UserDetailPage() {
                   onChange={(e) => setFormData({ ...formData, isSuper: e.target.checked })}
                   className="w-4 h-4"
                 />
-                <span className="text-sm font-medium">Super Admin</span>
+                <span className="text-sm font-medium">Супер-админ</span>
               </label>
             </div>
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isUpdating}>
-                {isUpdating ? 'Saving...' : 'Save Changes'}
+                {isUpdating ? 'Сохранение...' : 'Сохранить изменения'}
               </Button>
               <Button type="button" variant="outline" onClick={() => router.back()}>
-                Cancel
+                Отмена
               </Button>
             </div>
           </form>
