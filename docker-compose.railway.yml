@@ -1,0 +1,22 @@
+version: '3.8'
+
+# Railway stack template: Fluff Admin (Next.js)
+#
+# Railway does NOT run compose files directly. Use this file to create a service:
+# 1. Open your Railway project (same as FluffBackend or a new one)
+# 2. Drag & drop this file OR create service manually (see RAILWAY_DEPLOY.md)
+# 3. Service name: admin
+# 4. Connect GitHub repo (FluffAdmin) to the admin service
+# 5. Generate public domain for admin
+#
+# NEXT_PUBLIC_* vars are baked in at build time — set them before deploy/redeploy.
+
+services:
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://backend-production-9803a.up.railway.app}
+        NEXT_PUBLIC_MEDIA_URL: ${NEXT_PUBLIC_MEDIA_URL:-https://media-service-5zxp-production.up.railway.app}
+    restart: unless-stopped

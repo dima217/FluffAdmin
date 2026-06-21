@@ -68,8 +68,8 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      <div className="flex w-full flex-nowrap gap-4">
+        <Card className="min-w-0 flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Пользователи</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
@@ -82,7 +82,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0 flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Рецепты</CardTitle>
             <ChefHat className="h-4 w-4 text-muted-foreground" />
@@ -95,7 +95,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0 flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Продукты</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -105,21 +105,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Отзывы</CardTitle>
-            <MessageSquare className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats?.total_reviews || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Средняя оценка:{" "}
-              {Number(stats?.avg_review_score || 0).toFixed(2) || "0.00"}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
+        <Card className="min-w-0 flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Записи трекинга</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +115,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="min-w-0 flex-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Избранное</CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />

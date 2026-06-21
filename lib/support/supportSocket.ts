@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { API_BASE_URL } from "@/lib/config";
 
 export type WsStatus = "disconnected" | "connecting" | "connected";
 
@@ -17,10 +18,6 @@ const SUPPORT_EVENTS = [
   "support:ticket_replied",
   "support:ticket_created",
 ] as const;
-
-function getWsBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-}
 
 class SupportSocket {
   private socket: Socket | null = null;
@@ -114,7 +111,7 @@ class SupportSocket {
     }
 
     try {
-      this.socket = io(getWsBaseUrl(), {
+      this.socket = io(API_BASE_URL, {
         auth: { token: `Bearer ${accessToken}` },
         transports: ["websocket", "polling"],
         reconnection: true,

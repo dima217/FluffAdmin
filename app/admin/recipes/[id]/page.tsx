@@ -87,6 +87,8 @@ export default function AdminRecipeEditPage() {
     stepsConfigJson: '{\n  "steps": []\n}',
     productIds: [] as number[],
     customProductsJson: "[]",
+    makePublic: true,
+    submitToSystem: false,
   });
 
   useEffect(() => {
@@ -111,6 +113,8 @@ export default function AdminRecipeEditPage() {
       stepsConfigJson: initialStepsJson,
       productIds: initialProductIds,
       customProductsJson: initialCustomProductsJson,
+      makePublic: recipe.makePublic ?? true,
+      submitToSystem: recipe.submitToSystem ?? false,
     });
   }, [recipe, initialStepsJson, initialProductIds, initialCustomProductsJson]);
 
@@ -154,8 +158,10 @@ export default function AdminRecipeEditPage() {
             }
           : undefined,
       stepsConfig,
-      productIds: form.productIds,
+      products: form.productIds.map((id) => ({ id })),
       customProducts,
+      makePublic: form.makePublic,
+      submitToSystem: form.submitToSystem,
     };
 
     Object.keys(body).forEach((k) =>
@@ -340,7 +346,7 @@ export default function AdminRecipeEditPage() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Продукты из базы</label>
               <p className="text-xs text-muted-foreground mb-2">
-                Выберите продукты из списка (будут отправлены как productIds)
+                Выберите продукты из списка
               </p>
               <div className="border rounded-md p-3 max-h-48 overflow-y-auto space-y-2">
                 {products.length === 0 ? (
@@ -387,8 +393,7 @@ export default function AdminRecipeEditPage() {
                 Кастомные продукты
               </label>
               <p className="text-xs text-muted-foreground mb-1">
-                JSON-массив объектов, например: [
-                {`{"name": "Соль", "amount": "по вкусу"}`}]
+                JSON-массив объектов, например: [{`{"name": "Соль", "grams": 5, "unit": "г"}`}]
               </p>
               <textarea
                 id="customProductsJson"
@@ -397,7 +402,7 @@ export default function AdminRecipeEditPage() {
                 onChange={(e) =>
                   setForm({ ...form, customProductsJson: e.target.value })
                 }
-                placeholder={'[{"name": "Соль", "amount": "по вкусу"}]'}
+                placeholder={'[{"name": "Соль", "grams": 5, "unit": "г"}]'}
               />
             </div>
 
@@ -430,6 +435,27 @@ export default function AdminRecipeEditPage() {
                 ))}
               </div>
             )}
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={form.makePublic}
+                  onChange={(e) => setForm({ ...form, makePublic: e.target.checked })}
+                  className="rounded border-gray-300 w-4 h-4"
+                />
+                <span className="text-sm font-medium">Опубликовать (makePublic)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={form.submitToSystem}
+                  onChange={(e) => setForm({ ...form, submitToSystem: e.target.checked })}
+                  className="rounded border-gray-300 w-4 h-4"
+                />
+                <span className="text-sm font-medium">Отправить в систему (submitToSystem)</span>
+              </label>
+            </div>
 
             <div className="flex gap-2">
               <Button type="submit" disabled={isSaving}>

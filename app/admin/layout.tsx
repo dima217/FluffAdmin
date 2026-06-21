@@ -13,7 +13,6 @@ import {
   LogOut,
   ChefHat,
   ShoppingCart,
-  MessageSquare,
   Activity,
   LifeBuoy,
 } from "lucide-react";
@@ -83,12 +82,6 @@ export default function AdminLayout({
             <Button variant="ghost" className="w-full justify-start">
               <ShoppingCart className="mr-2 h-4 w-4" />
               Продукты
-            </Button>
-          </Link>
-          <Link href="/admin/reviews">
-            <Button variant="ghost" className="w-full justify-start">
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Отзывы
             </Button>
           </Link>
           <Link href="/admin/tracking">

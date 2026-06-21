@@ -36,6 +36,8 @@ export default function AdminRecipeCreatePage() {
     stepsConfigJson: '{\n  "steps": []\n}',
     productIds: [] as number[],
     customProductsJson: "[]",
+    makePublic: true,
+    submitToSystem: false,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,8 +77,10 @@ export default function AdminRecipeCreatePage() {
         preview: form.imagePreview,
       },
       stepsConfig,
-      productIds: form.productIds,
+      products: form.productIds.map((id) => ({ id })),
       customProducts,
+      makePublic: form.makePublic,
+      submitToSystem: form.submitToSystem,
     };
 
     try {
@@ -307,7 +311,7 @@ export default function AdminRecipeCreatePage() {
                 Кастомные продукты
               </label>
               <p className="text-xs text-muted-foreground mb-1">
-                JSON-массив объектов, например: [{`{"name": "Соль", "amount": "по вкусу"}`}]
+                JSON-массив объектов, например: [{`{"name": "Соль", "grams": 5, "unit": "г"}`}]
               </p>
               <textarea
                 id="customProductsJson"
@@ -332,6 +336,27 @@ export default function AdminRecipeCreatePage() {
                   setForm({ ...form, stepsConfigJson: e.target.value })
                 }
               />
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={form.makePublic}
+                  onChange={(e) => setForm({ ...form, makePublic: e.target.checked })}
+                  className="rounded border-gray-300 w-4 h-4"
+                />
+                <span className="text-sm font-medium">Опубликовать (makePublic)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={form.submitToSystem}
+                  onChange={(e) => setForm({ ...form, submitToSystem: e.target.checked })}
+                  className="rounded border-gray-300 w-4 h-4"
+                />
+                <span className="text-sm font-medium">Отправить в систему (submitToSystem)</span>
+              </label>
             </div>
 
             <div className="flex gap-2">

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "DOCKERFILE",
+    "dockerfilePath": "Dockerfile",
+    "buildArgs": {
+      "NEXT_PUBLIC_API_URL": "${{NEXT_PUBLIC_API_URL}}",
+      "NEXT_PUBLIC_MEDIA_URL": "${{NEXT_PUBLIC_MEDIA_URL}}"
+    }
+  },
+  "deploy": {
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}

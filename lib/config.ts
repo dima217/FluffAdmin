@@ -1,16 +1,20 @@
-// API Configuration
+// API Configuration — single source of truth for backend URLs
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ??
+  "https://backend-production-9803a.up.railway.app";
+
+export const MEDIA_BASE_URL =
+  process.env.NEXT_PUBLIC_MEDIA_URL ??
+  "https://media-service-5zxp-production.up.railway.app";
+
 export const API_CONFIG = {
-  // Development
-  baseUrl: "http://10.188.8.195:3000",
-
-  mediaBaseUrl: "http://10.132.93.195:3002",
-
-  // Timeouts
-  timeout: 30000, // 30 seconds
+  baseUrl: API_BASE_URL,
+  mediaBaseUrl: MEDIA_BASE_URL,
+  timeout: 30000,
   maxRetries: 3,
   retryDelay: 1000,
-};
+} as const;
 
-export const getBaseUrl = (): string => API_CONFIG.baseUrl;
+export const getBaseUrl = (): string => API_BASE_URL;
 
-export const getMediaBaseUrl = (): string => API_CONFIG.mediaBaseUrl;
+export const getMediaBaseUrl = (): string => MEDIA_BASE_URL;
