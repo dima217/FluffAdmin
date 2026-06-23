@@ -1,15 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListSearchInput } from "@/components/ListSearchInput";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
 import { MessageSquare } from "lucide-react";
 import { useGetAllSupportTicketsQuery } from "@/lib/features/admin/adminApi";
 import { useSupportTicketEvents } from "@/hooks/useSupportTicketEvents";
 import { useFilteredList } from "@/hooks/useFilteredList";
+import { useListQueryParams } from "@/hooks/useListQueryParams";
 import {
   matchesSearch,
   TICKET_STATUS_LABELS,
@@ -17,10 +19,10 @@ import {
 import { SupportTicketStatus } from "@/lib/features/admin/adminApi";
 import { formatDateRu } from "@/lib/formatDate";
 
-export default function SupportPage() {
+function SupportPageContent() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const { page, search, setPage, setSearch, hrefWithQuery } =
+    useListQueryParams();
 
   const { data, isLoading, refetch } = useGetAllSupportTicketsQuery({
     page,
@@ -47,7 +49,7 @@ export default function SupportPage() {
 
   const filteredTickets = useFilteredList(data?.tickets, search, filterTicket);
 
-  if (isLoading) return <div>Загрузка...</div>;
+  if (isLoading && !data) return <div>Загрузка...</div>;
 
   return (
     <div className="space-y-6">
@@ -111,7 +113,9 @@ export default function SupportPage() {
                           size="sm"
                           variant="outline"
                           onClick={() =>
-                            router.push(`/admin/support/${ticket.id}`)
+                            router.push(
+                              hrefWithQuery(`/admin/support/${ticket.id}`)
+                            )
                           }
                         >
                           <MessageSquare className="h-4 w-4" />
@@ -152,5 +156,13 @@ export default function SupportPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SupportPage() {
+  return (
+    <ListPageSuspense>
+      <SupportPageContent />
+    </ListPageSuspense>
   );
 }

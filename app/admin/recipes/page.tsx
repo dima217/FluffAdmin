@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListSearchInput } from "@/components/ListSearchInput";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
 import { Trash2, Edit, Plus, Check, X } from "lucide-react";
-import React from "react";
 import {
   useGetAdminRecipesQuery,
   useDeleteRecipeMutation,
@@ -16,15 +16,16 @@ import {
 } from "@/lib/features/admin/adminApi";
 import { RadioRecipe } from "@/components/radio-recipes";
 import { useFilteredList } from "@/hooks/useFilteredList";
+import { useListQueryParams } from "@/hooks/useListQueryParams";
 import { matchesSearch } from "@/lib/adminLabels";
 import { formatDateRu } from "@/lib/formatDate";
 
-export default function RecipesPage() {
+function RecipesPageContent() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const [pageRequest, setPageRequest] = useState(1);
-  const [search, setSearch] = useState("");
-  const [selectedValue, setSelectedValue] = React.useState("option1");
+  const { page, search, tab, setPage, setSearch, setTab, hrefWithQuery } =
+    useListQueryParams({ tabKey: "tab", tabDefault: "option1" });
+
+  const selectedValue = tab === "option2" ? "option2" : "option1";
 
   const recipes = useGetAdminRecipesQuery(
     { page, limit: 10 },
@@ -32,7 +33,7 @@ export default function RecipesPage() {
   );
 
   const requests = useGetAdminRecipesRequestsQuery(
-    { page: pageRequest, limit: 10 },
+    { page, limit: 10 },
     { skip: selectedValue === "option1" }
   );
 
@@ -50,7 +51,6 @@ export default function RecipesPage() {
   );
 
   const filteredItems = useFilteredList(data?.data, search, filterRecipe);
-  const currentPage = selectedValue === "option1" ? page : pageRequest;
 
   const handleDelete = async (id: number) => {
     if (confirm("Удалить этот рецепт?")) {
@@ -62,7 +62,7 @@ export default function RecipesPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <div>Загрузка...</div>;
   }
 
@@ -79,7 +79,7 @@ export default function RecipesPage() {
         </Button>
       </div>
 
-      <RadioRecipe value={selectedValue} onChange={setSelectedValue} />
+      <RadioRecipe value={selectedValue} onChange={setTab} />
 
       <Card>
         <CardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -158,7 +158,9 @@ export default function RecipesPage() {
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              router.push(`/admin/recipes/${recipe.id}`)
+                              router.push(
+                                hrefWithQuery(`/admin/recipes/${recipe.id}`)
+                              )
                             }
                           >
                             <Edit className="h-4 w-4" />
@@ -190,23 +192,15 @@ export default function RecipesPage() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  selectedValue === "option1"
-                    ? setPage(page - 1)
-                    : setPageRequest(pageRequest - 1)
-                }
-                disabled={currentPage === 1}
+                onClick={() => setPage(page - 1)}
+                disabled={page === 1}
               >
                 Назад
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  selectedValue === "option1"
-                    ? setPage(page + 1)
-                    : setPageRequest(pageRequest + 1)
-                }
+                onClick={() => setPage(page + 1)}
                 disabled={!data || data.data.length < 10}
               >
                 Далее
@@ -216,5 +210,13 @@ export default function RecipesPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function RecipesPage() {
+  return (
+    <ListPageSuspense>
+      <RecipesPageContent />
+    </ListPageSuspense>
   );
 }

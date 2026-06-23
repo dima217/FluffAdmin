@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { ListPageSuspense } from '@/components/ListPageSuspense';
+import { useListReturnPath } from '@/hooks/useListReturnPath';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +11,16 @@ import { ArrowLeft } from 'lucide-react';
 import { useGetAdminProductQuery, useUpdateAdminProductMutation } from '@/lib/features/admin/adminApi';
 
 export default function AdminProductEditPage() {
+  return (
+    <ListPageSuspense>
+      <AdminProductEditPageContent />
+    </ListPageSuspense>
+  );
+}
+
+function AdminProductEditPageContent() {
   const router = useRouter();
+  const listReturnPath = useListReturnPath('/admin/products');
   const params = useParams();
   const id = Number(params.id);
 
@@ -59,7 +70,7 @@ export default function AdminProductEditPage() {
     try {
       await updateProduct({ id, body }).unwrap();
       alert('Продукт успешно обновлён');
-      router.push('/admin/products');
+      router.push(listReturnPath);
     } catch (error) {
       console.error('Failed to update product:', error);
       alert('Не удалось обновить продукт');
@@ -72,7 +83,7 @@ export default function AdminProductEditPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
+        <Button variant="outline" size="sm" onClick={() => router.push(listReturnPath)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Назад
         </Button>
@@ -156,7 +167,7 @@ export default function AdminProductEditPage() {
               <Button type="submit" disabled={isSaving}>
                 {isSaving ? 'Сохранение...' : 'Сохранить изменения'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => router.back()}>
+              <Button type="button" variant="outline" onClick={() => router.push(listReturnPath)}>
                 Отмена
               </Button>
             </div>

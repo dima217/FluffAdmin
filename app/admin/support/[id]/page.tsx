@@ -1,6 +1,8 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
+import { useListReturnPath } from "@/hooks/useListReturnPath";
 import { ArrowLeft, Calendar, Eye, User } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,7 +40,16 @@ function StatusBadge({ status }: { status: SupportTicketStatus }) {
 }
 
 export default function SupportDetailPage() {
+  return (
+    <ListPageSuspense>
+      <SupportDetailPageContent />
+    </ListPageSuspense>
+  );
+}
+
+function SupportDetailPageContent() {
   const router = useRouter();
+  const listReturnPath = useListReturnPath("/admin/support");
   const params = useParams();
   const id = String(params.id);
   const ticketId = Number(id);
@@ -86,7 +97,7 @@ export default function SupportDetailPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
-          <Button variant="outline" size="sm" onClick={() => router.back()}>
+          <Button variant="outline" size="sm" onClick={() => router.push(listReturnPath)}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Назад
           </Button>

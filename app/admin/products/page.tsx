@@ -1,24 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListSearchInput } from "@/components/ListSearchInput";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
 import { Trash2, Edit, Plus } from "lucide-react";
 import {
   useGetAdminProductsQuery,
   useDeleteProductMutation,
 } from "@/lib/features/admin/adminApi";
 import { useFilteredList } from "@/hooks/useFilteredList";
+import { useListQueryParams } from "@/hooks/useListQueryParams";
 import { matchesSearch } from "@/lib/adminLabels";
 import { formatDateRu } from "@/lib/formatDate";
 
-export default function ProductsPage() {
+function ProductsPageContent() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const { page, search, setPage, setSearch, hrefWithQuery } =
+    useListQueryParams();
   const { data, isLoading } = useGetAdminProductsQuery({ page, limit: 10 });
   const [deleteProduct] = useDeleteProductMutation();
 
@@ -40,7 +42,7 @@ export default function ProductsPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <div>Загрузка...</div>;
   }
 
@@ -102,7 +104,9 @@ export default function ProductsPage() {
                             size="sm"
                             variant="outline"
                             onClick={() =>
-                              router.push(`/admin/products/${product.id}`)
+                              router.push(
+                                hrefWithQuery(`/admin/products/${product.id}`)
+                              )
                             }
                           >
                             <Edit className="h-4 w-4" />
@@ -150,5 +154,13 @@ export default function ProductsPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <ListPageSuspense>
+      <ProductsPageContent />
+    </ListPageSuspense>
   );
 }

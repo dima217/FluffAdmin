@@ -1,23 +1,25 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ListSearchInput } from "@/components/ListSearchInput";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
 import {
   useGetAdminUsersQuery,
   useDeleteUserMutation,
 } from "@/lib/features/admin/adminApi";
 import { Trash2, Edit } from "lucide-react";
 import { useFilteredList } from "@/hooks/useFilteredList";
+import { useListQueryParams } from "@/hooks/useListQueryParams";
 import { matchesSearch } from "@/lib/adminLabels";
 import { formatDateRu } from "@/lib/formatDate";
 
-export default function UsersPage() {
+function UsersPageContent() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const { page, search, setPage, setSearch, hrefWithQuery } =
+    useListQueryParams();
   const { data, isLoading } = useGetAdminUsersQuery({ page, limit: 10 });
   const [deleteUser] = useDeleteUserMutation();
 
@@ -54,7 +56,7 @@ export default function UsersPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <div>Загрузка...</div>;
   }
 
@@ -140,7 +142,11 @@ export default function UsersPage() {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => router.push(`/admin/users/${user.id}`)}
+                            onClick={() =>
+                              router.push(
+                                hrefWithQuery(`/admin/users/${user.id}`)
+                              )
+                            }
                             disabled={user.isSuper}
                             title={
                               user.isSuper
@@ -200,5 +206,13 @@ export default function UsersPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <ListPageSuspense>
+      <UsersPageContent />
+    </ListPageSuspense>
   );
 }

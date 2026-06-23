@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import { ListPageSuspense } from '@/components/ListPageSuspense';
+import { useListReturnPath } from '@/hooks/useListReturnPath';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +11,16 @@ import { useGetUserByIdQuery, useUpdateUserMutation } from '@/lib/features/users
 import { ArrowLeft } from 'lucide-react';
 
 export default function UserDetailPage() {
+  return (
+    <ListPageSuspense>
+      <UserDetailPageContent />
+    </ListPageSuspense>
+  );
+}
+
+function UserDetailPageContent() {
   const router = useRouter();
+  const listReturnPath = useListReturnPath('/admin/users');
   const params = useParams();
   const id = Number(params.id);
   
@@ -29,7 +40,7 @@ export default function UserDetailPage() {
     try {
       await updateUser({ id, data: formData }).unwrap();
       alert('Пользователь успешно обновлён');
-      router.push('/admin/users');
+      router.push(listReturnPath);
     } catch (error) {
       console.error('Failed to update user:', error);
       alert('Не удалось обновить пользователя');
@@ -58,7 +69,7 @@ export default function UserDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
+        <Button variant="outline" size="sm" onClick={() => router.push(listReturnPath)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Назад
         </Button>
@@ -139,7 +150,7 @@ export default function UserDetailPage() {
               <Button type="submit" disabled={isUpdating}>
                 {isUpdating ? 'Сохранение...' : 'Сохранить изменения'}
               </Button>
-              <Button type="button" variant="outline" onClick={() => router.back()}>
+              <Button type="button" variant="outline" onClick={() => router.push(listReturnPath)}>
                 Отмена
               </Button>
             </div>

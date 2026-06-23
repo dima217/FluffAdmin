@@ -7,6 +7,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
+import { useListReturnPath } from "@/hooks/useListReturnPath";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +22,16 @@ import { useMediaUrl } from "@/hooks/useMediaUrl";
 import { getBrowserMediaSrc } from "@/lib/utils";
 
 export default function AdminRecipeEditPage() {
+  return (
+    <ListPageSuspense>
+      <AdminRecipeEditPageContent />
+    </ListPageSuspense>
+  );
+}
+
+function AdminRecipeEditPageContent() {
   const router = useRouter();
+  const listReturnPath = useListReturnPath("/admin/recipes");
   const params = useParams();
   const id = Number(params.id);
 
@@ -185,7 +196,7 @@ export default function AdminRecipeEditPage() {
     try {
       await updateRecipe({ id, body }).unwrap();
       alert("Рецепт успешно обновлён");
-      router.push("/admin/recipes");
+      router.push(listReturnPath);
     } catch (error) {
       console.error("Failed to update recipe:", error);
       alert("Не удалось обновить рецепт");
@@ -198,7 +209,7 @@ export default function AdminRecipeEditPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => router.back()}>
+        <Button variant="outline" size="sm" onClick={() => router.push(listReturnPath)}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Назад
         </Button>
@@ -472,7 +483,7 @@ export default function AdminRecipeEditPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => router.back()}
+                onClick={() => router.push(listReturnPath)}
               >
                 Отмена
               </Button>

@@ -1,23 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ListPageSuspense } from "@/components/ListPageSuspense";
 import { Trash2, Plus } from "lucide-react";
 import { useGetAdminTrackingQuery } from "@/lib/features/admin/adminApi";
+import { useListQueryParams } from "@/hooks/useListQueryParams";
 import { formatDateRu } from "@/lib/formatDate";
 
-export default function TrackingPage() {
+function TrackingPageContent() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
+  const { page, setPage } = useListQueryParams();
   const { data, isLoading } = useGetAdminTrackingQuery({ page, limit: 10 });
 
   const handleDelete = async (id: number) => {
     if (confirm("Удалить эту запись трекинга?")) {
       try {
-        // TODO: Implement delete tracking
         console.log("Delete tracking:", id);
       } catch (error) {
         console.error("Failed to delete tracking:", error);
@@ -25,7 +25,7 @@ export default function TrackingPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !data) {
     return <div>Загрузка...</div>;
   }
 
@@ -90,7 +90,6 @@ export default function TrackingPage() {
             </table>
           </div>
 
-          {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <p className="text-sm text-muted-foreground">
               Показано {data?.data.length || 0} из {data?.total || 0} записей
@@ -118,5 +117,13 @@ export default function TrackingPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function TrackingPage() {
+  return (
+    <ListPageSuspense>
+      <TrackingPageContent />
+    </ListPageSuspense>
   );
 }
