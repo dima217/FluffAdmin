@@ -17,6 +17,7 @@ import {
   useGetAdminProductsQuery,
 } from "@/lib/features/admin/adminApi";
 import { useMediaUrl } from "@/hooks/useMediaUrl";
+import { useAuthenticatedMediaSrc } from "@/hooks/useAuthenticatedMediaSrc";
 
 export default function AdminRecipeEditPage() {
   const router = useRouter();
@@ -51,6 +52,26 @@ export default function AdminRecipeEditPage() {
         alt="step"
         className="w-full h-70 object-cover rounded-md mt-2"
         {...(media.headers ? { headers: media.headers } : {})}
+      />
+    );
+  }
+
+  function PromoVideoPreview({ url }: { url?: string }) {
+    const { src, isLoading } = useAuthenticatedMediaSrc(url, { skip: !url });
+
+    if (!url) return null;
+    if (isLoading) {
+      return (
+        <p className="text-sm text-muted-foreground mt-2">Загрузка видео...</p>
+      );
+    }
+    if (!src) return null;
+
+    return (
+      <video
+        src={src}
+        controls
+        className="w-full max-h-96 rounded-md mt-2 bg-black"
       />
     );
   }
@@ -334,13 +355,7 @@ export default function AdminRecipeEditPage() {
                 }
               />
 
-              {form.promotionalVideo && (
-                <video
-                  src={form.promotionalVideo}
-                  controls
-                  className="w-full h-100 rounded-md mt-2"
-                />
-              )}
+              <PromoVideoPreview url={form.promotionalVideo} />
             </div>
 
             <div className="space-y-2">

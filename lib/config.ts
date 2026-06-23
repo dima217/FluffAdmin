@@ -18,3 +18,30 @@ export const API_CONFIG = {
 export const getBaseUrl = (): string => API_BASE_URL;
 
 export const getMediaBaseUrl = (): string => MEDIA_BASE_URL;
+
+function trimTrailingSlash(url: string): string {
+  return url.replace(/\/$/, "");
+}
+
+export const buildMediaApiUrl = (path: string): string => {
+  const base = trimTrailingSlash(getMediaBaseUrl());
+  return `${base}${path.startsWith("/") ? path : `/${path}`}`;
+};
+
+export const buildMediaDownloadUrl = (mediaPath: string): string =>
+  buildMediaApiUrl(`/media/download?url=${encodeURIComponent(mediaPath)}`);
+
+export const isMediaServerOrigin = (url: string | null | undefined): boolean => {
+  if (!url) return false;
+  const base = trimTrailingSlash(getMediaBaseUrl());
+  return url === base || url.startsWith(`${base}/`);
+};
+
+export const isApiServerOrigin = (url: string | null | undefined): boolean => {
+  if (!url) return false;
+  const base = trimTrailingSlash(getBaseUrl());
+  return url === base || url.startsWith(`${base}/`);
+};
+
+export const isOurMediaHostOrigin = (url: string | null | undefined): boolean =>
+  isMediaServerOrigin(url) || isApiServerOrigin(url);
