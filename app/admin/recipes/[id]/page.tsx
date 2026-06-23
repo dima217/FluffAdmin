@@ -17,7 +17,7 @@ import {
   useGetAdminProductsQuery,
 } from "@/lib/features/admin/adminApi";
 import { useMediaUrl } from "@/hooks/useMediaUrl";
-import { useAuthenticatedMediaSrc } from "@/hooks/useAuthenticatedMediaSrc";
+import { getBrowserMediaSrc } from "@/lib/utils";
 
 export default function AdminRecipeEditPage() {
   const router = useRouter();
@@ -57,14 +57,7 @@ export default function AdminRecipeEditPage() {
   }
 
   function PromoVideoPreview({ url }: { url?: string }) {
-    const { src, isLoading } = useAuthenticatedMediaSrc(url, { skip: !url });
-
-    if (!url) return null;
-    if (isLoading) {
-      return (
-        <p className="text-sm text-muted-foreground mt-2">Загрузка видео...</p>
-      );
-    }
+    const src = getBrowserMediaSrc(url);
     if (!src) return null;
 
     return (

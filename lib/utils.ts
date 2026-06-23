@@ -70,22 +70,6 @@ export function normalizeMediaUrl(
 
   if (urlType === "direct") {
     const rewritten = rewriteLocalhostToMediaHost(url);
-
-    try {
-      const parsed = new URL(rewritten);
-      // HTTP MinIO/presigned на HTTPS-админке → mixed content / ERR_SSL_PROTOCOL_ERROR.
-      // Проксируем через HTTPS media service.
-      if (
-        parsed.pathname &&
-        (parsed.protocol === "http:" ||
-          (hasPresignedS3Query(url) && !isOurMediaHostOrigin(rewritten)))
-      ) {
-        return buildMediaDownloadUrl(parsed.pathname);
-      }
-    } catch {
-      // ignore
-    }
-
     if (shouldStripMediaQuery(rewritten)) {
       return stripUrlQuery(rewritten);
     }
@@ -97,6 +81,15 @@ export function normalizeMediaUrl(
   }
 
   return null;
+}
+
+export function getBrowserMediaSrc(url: string | null | undefined): string | null {
+  const normalized = normalizeMediaUrl(url);
+  if (!normalized) return null;
+  if (normalized.startsWith("http://")) {
+    return `/api/proxy-media?url=${encodeURIComponent(normalized)}`;
+  }
+  return normalized;
 }
 
 export function isProxyUrl(url: string | null | undefined): boolean {
