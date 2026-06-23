@@ -70,6 +70,22 @@ export function normalizeMediaUrl(
 
   if (urlType === "direct") {
     const rewritten = rewriteLocalhostToMediaHost(url);
+
+    try {
+      const parsed = new URL(rewritten);
+      // HTTP MinIO/presigned на HTTPS-админке → mixed content / ERR_SSL_PROTOCOL_ERROR.
+      // Проксируем через HTTPS media service.
+      if (
+        parsed.pathname &&
+        (parsed.protocol === "http:" ||
+          (hasPresignedS3Query(url) && !isOurMediaHostOrigin(rewritten)))
+      ) {
+        return buildMediaDownloadUrl(parsed.pathname);
+      }
+    } catch {
+      // ignore
+    }
+
     if (shouldStripMediaQuery(rewritten)) {
       return stripUrlQuery(rewritten);
     }
