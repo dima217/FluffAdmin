@@ -5,6 +5,7 @@ import type {
   FetchBaseQueryError,
 } from "@reduxjs/toolkit/query";
 import type { RootState } from "./store";
+import { setTokens, logout } from "./features/auth/authSlice";
 import { API_BASE_URL } from "./config";
 
 const baseQuery = fetchBaseQuery({
@@ -42,13 +43,15 @@ const baseQueryWithReauth: BaseQueryFn<
       );
 
       if (refreshResult.data) {
-        api.dispatch({ type: "auth/setTokens", payload: refreshResult.data });
+        api.dispatch(
+          setTokens(refreshResult.data as { access: string; refresh?: string })
+        );
         result = await baseQuery(args, api, extraOptions);
       } else {
-        api.dispatch({ type: "auth/logout" });
+        api.dispatch(logout());
       }
     } else {
-      api.dispatch({ type: "auth/logout" });
+      api.dispatch(logout());
     }
   }
 

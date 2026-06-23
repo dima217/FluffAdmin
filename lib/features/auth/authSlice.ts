@@ -18,9 +18,14 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setTokens: (state, action: PayloadAction<{ access: string; refresh: string }>) => {
+    setTokens: (
+      state,
+      action: PayloadAction<{ access: string; refresh?: string }>
+    ) => {
       state.accessToken = action.payload.access;
-      state.refreshToken = action.payload.refresh;
+      if (action.payload.refresh) {
+        state.refreshToken = action.payload.refresh;
+      }
       
       // Декодируем JWT чтобы получить isSuper и userId
       try {

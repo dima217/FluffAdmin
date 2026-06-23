@@ -24,6 +24,9 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const auth = useAppSelector((state) => state.auth) as AuthState | undefined;
+  const rehydrated = useAppSelector(
+    (state) => (state as { _persist?: { rehydrated?: boolean } })._persist?.rehydrated ?? false
+  );
   const accessToken = auth?.accessToken ?? null;
   const isSuper = auth?.isSuper ?? false;
   const dispatch = useAppDispatch();
@@ -31,19 +34,20 @@ export default function AdminLayout({
   useSupportSocket();
 
   useEffect(() => {
+    if (!rehydrated) return;
     if (!accessToken) {
       router.push("/login");
     } else if (!isSuper) {
       router.push("/");
     }
-  }, [accessToken, isSuper, router]);
+  }, [rehydrated, accessToken, isSuper, router]);
 
   const handleLogout = () => {
     dispatch(logout());
     router.push("/login");
   };
 
-  if (!accessToken || !isSuper) {
+  if (!rehydrated || !accessToken || !isSuper) {
     return null;
   }
 

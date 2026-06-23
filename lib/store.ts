@@ -1,7 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import {
-  persistStore,
   persistReducer,
   FLUSH,
   REHYDRATE,
@@ -47,6 +46,3 @@ export const makeStore = () => {
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore['getState']>;
 export type AppDispatch = AppStore['dispatch'];
-
-export const store = makeStore();
-export const persistor = persistStore(store);
