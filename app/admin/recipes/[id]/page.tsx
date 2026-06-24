@@ -18,8 +18,7 @@ import {
   useUpdateAdminRecipeMutation,
   useGetAdminProductsQuery,
 } from "@/lib/features/admin/adminApi";
-import { AdminImageUrlField } from "@/components/admin/AdminImageUrlField";
-import { RecipeStepsMediaPreview } from "@/components/admin/RecipeStepsMediaPreview";
+import { useMediaUrl } from "@/hooks/useMediaUrl";
 import { getBrowserMediaSrc } from "@/lib/utils";
 
 export default function AdminRecipeEditPage() {
@@ -44,6 +43,29 @@ function AdminRecipeEditPageContent() {
     limit: 500,
   });
   const products = productsData?.data ?? [];
+
+  const coverMedia = useMediaUrl(recipe?.image?.cover, {
+    skip: !recipe?.image?.cover,
+  });
+
+  const previewMedia = useMediaUrl(recipe?.image?.preview, {
+    skip: !recipe?.image?.preview,
+  });
+
+  function StepImage({ url }: { url?: string }) {
+    const media = useMediaUrl(url, { skip: !url });
+
+    if (!media.url) return null;
+
+    return (
+      <img
+        src={media.url}
+        alt="step"
+        className="w-full h-70 object-cover rounded-md mt-2"
+        {...(media.headers ? { headers: media.headers } : {})}
+      />
+    );
+  }
 
   function PromoVideoPreview({ url }: { url?: string }) {
     const src = getBrowserMediaSrc(url);
@@ -283,20 +305,46 @@ function AdminRecipeEditPageContent() {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <AdminImageUrlField
-                id="imageCover"
-                label="Обложка"
-                value={form.imageCover}
-                onChange={(imageCover) => setForm({ ...form, imageCover })}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="imageCover" className="text-sm font-medium">
+                  URL обложки
+                </label>
+                <Input
+                  id="imageCover"
+                  value={form.imageCover}
+                  onChange={(e) =>
+                    setForm({ ...form, imageCover: e.target.value })
+                  }
+                />
 
-              <AdminImageUrlField
-                id="imagePreview"
-                label="Превью"
-                value={form.imagePreview}
-                onChange={(imagePreview) => setForm({ ...form, imagePreview })}
-              />
+                {coverMedia.url && (
+                  <img
+                    src={coverMedia.url}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="imagePreview" className="text-sm font-medium">
+                  URL превью
+                </label>
+                <Input
+                  id="imagePreview"
+                  value={form.imagePreview}
+                  onChange={(e) =>
+                    setForm({ ...form, imagePreview: e.target.value })
+                  }
+                />
+
+                {previewMedia.url && (
+                  <img
+                    src={previewMedia.url}
+                    className="w-full h-48 object-cover rounded-md"
+                  />
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -391,7 +439,21 @@ function AdminRecipeEditPageContent() {
               />
             </div>
 
-            <RecipeStepsMediaPreview stepsConfigJson={form.stepsConfigJson} />
+            {recipe?.stepsConfig?.steps?.length > 0 && (
+              <div className="space-y-3 mt-3">
+                {recipe.stepsConfig.steps.map((step: any, index: number) => (
+                  <div key={index} className="border p-3 rounded-md">
+                    <div className="text-sm font-medium">
+                      Шаг {index + 1}: {step.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {step.description}
+                    </div>
+                    <StepImage url={step?.resources?.[0]?.source} />{" "}
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 cursor-pointer select-none">

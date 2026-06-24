@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 import { useGetAdminProductQuery, useUpdateAdminProductMutation } from '@/lib/features/admin/adminApi';
+import { AdminUrlMediaPreview } from '@/components/admin/AdminUrlMediaPreview';
 
 export default function AdminProductEditPage() {
   return (
@@ -149,6 +150,7 @@ function AdminProductEditPageContent() {
                   value={form.imageCover}
                   onChange={(e) => setForm({ ...form, imageCover: e.target.value })}
                 />
+                <AdminUrlMediaPreview url={form.imageCover} alt="Обложка" />
               </div>
 
               <div className="space-y-2">
@@ -160,6 +162,7 @@ function AdminProductEditPageContent() {
                   value={form.imagePreview}
                   onChange={(e) => setForm({ ...form, imagePreview: e.target.value })}
                 />
+                <AdminUrlMediaPreview url={form.imagePreview} alt="Превью" />
               </div>
             </div>
 

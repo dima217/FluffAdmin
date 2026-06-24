@@ -10,8 +10,6 @@ import {
   useCreateAdminRecipeMutation,
   useGetAdminProductsQuery,
 } from "@/lib/features/admin/adminApi";
-import { AdminImageUrlField } from "@/components/admin/AdminImageUrlField";
-import { RecipeStepsMediaPreview } from "@/components/admin/RecipeStepsMediaPreview";
 import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
@@ -224,22 +222,34 @@ export default function AdminRecipeCreatePage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <AdminImageUrlField
-                id="imageCover"
-                label="Обложка"
-                value={form.imageCover}
-                onChange={(imageCover) => setForm({ ...form, imageCover })}
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="imageCover" className="text-sm font-medium">
+                  URL обложки
+                </label>
+                <Input
+                  id="imageCover"
+                  value={form.imageCover}
+                  onChange={(e) =>
+                    setForm({ ...form, imageCover: e.target.value })
+                  }
+                  required
+                />
+              </div>
 
-              <AdminImageUrlField
-                id="imagePreview"
-                label="Превью"
-                value={form.imagePreview}
-                onChange={(imagePreview) => setForm({ ...form, imagePreview })}
-                required
-              />
+              <div className="space-y-2">
+                <label htmlFor="imagePreview" className="text-sm font-medium">
+                  URL превью
+                </label>
+                <Input
+                  id="imagePreview"
+                  value={form.imagePreview}
+                  onChange={(e) =>
+                    setForm({ ...form, imagePreview: e.target.value })
+                  }
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -327,8 +337,6 @@ export default function AdminRecipeCreatePage() {
                 }
               />
             </div>
-
-            <RecipeStepsMediaPreview stepsConfigJson={form.stepsConfigJson} />
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 cursor-pointer select-none">
